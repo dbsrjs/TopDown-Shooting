@@ -12,16 +12,26 @@ public class Bullet : MonoBehaviour
     float speed = 10;
     float damage = 1;
 
+    float what_do_I_call_this_variable = 0.1f;
+
+    private void Start()
+    {
+        Destroy(gameObject, 3f);
+
+        Collider[] initialCollisions = Physics.OverlapSphere(transform.position, 0.1f, collisionMask);
+
+        if (initialCollisions.Length > 0)   //총알이 생성 됐을 때 어떤 충돌체 오브젝트와 이미 겹친 상태일 때
+        {
+            OnHitObject(initialCollisions[0]);
+        }
+    }
+
     public void SetSpeed(float _speed)
     {
         speed = _speed;
     }
     void Update()
     {
-        time += Time.deltaTime;
-        if(time >= 5f)  //총알이 생성된지 5초 이상이 되면 삭제.
-            Destroy(gameObject);
-
         float moveDistance = speed * Time.deltaTime; 
         CheckCollisions(moveDistance);
         transform.Translate(Vector3.right * moveDistance);
@@ -32,10 +42,8 @@ public class Bullet : MonoBehaviour
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
 
-        if(Physics.Raycast(ray, out hit, moveDistance, collisionMask, QueryTriggerInteraction.Collide))
-        {
+        if(Physics.Raycast(ray, out hit, moveDistance + what_do_I_call_this_variable, collisionMask, QueryTriggerInteraction.Collide))
             OnHitObject(hit);
-        }
     }
 
     void OnHitObject(RaycastHit hit)
@@ -44,6 +52,16 @@ public class Bullet : MonoBehaviour
         if (damageableObject != null)
         {
             damageableObject.TakeHit(damage, hit);
+        }
+        Destroy(gameObject);
+    }
+
+    void OnHitObject(Collider c)
+    {
+        IDamageable damageableObject = c.GetComponent<IDamageable>();
+        if (damageableObject != null)
+        {
+            damageableObject.TakeDamage(damage);
         }
         Destroy(gameObject);
     }
