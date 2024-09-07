@@ -4,9 +4,11 @@ using UnityEngine;
 
 //RequireComponent를 사용하는 스크립트를 GameObject에 추가하면 필요한 component가 GameObject에 자동으로 추가됩니다. 
 [RequireComponent (typeof (PlayerController))]
+[RequireComponent (typeof (GunController))]
 public class Player : MonoBehaviour
 {
     PlayerController controller;
+    GunController gunController;
     Camera camera;
 
     public float speed = 5;
@@ -14,15 +16,18 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         controller = GetComponent<PlayerController>();
+        gunController = GetComponent<GunController>();
         camera = Camera.main;
     }
 
     void Update()
     {
+        //이동 로직
         Vector3 moveInout = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
         Vector3 moveVelocity = moveInout.normalized * speed;
-        controller.Move(moveVelocity);
+        controller.Move(moveVelocity); 
 
+        //바라보는 곳
         Ray ray = camera.ScreenPointToRay(Input.mousePosition); //마우스 포인터의 위치를 반환해줌
         Plane groundPlane = new Plane(Vector3.up, Vector3Int.zero);
         float rayDistance;
@@ -33,6 +38,12 @@ public class Player : MonoBehaviour
             Vector3 point = ray.GetPoint(rayDistance);  //마우스 포인터의 위치를 보여줌
             Debug.DrawLine(ray.origin, point, Color.red);   //ray의 시작점부터 끝점까지를 빨간색 선으로 표시해줌.
             controller.LookAt(point);
+        }
+
+        //무기 조작
+        if(Input.GetMouseButton(0))
+        {
+            gunController.Shoot();
         }
     }
 }
