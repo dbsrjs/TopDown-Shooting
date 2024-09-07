@@ -5,8 +5,11 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    public LayerMask collisionMask;
+
     float speed = 10;
     float time = 0;
+
     public void SetSpeed(float _speed)
     {
         speed = _speed;
@@ -19,6 +22,25 @@ public class Bullet : MonoBehaviour
             Destroy(gameObject);
         }
 
-        transform.Translate(Vector3.right * Time.deltaTime * speed);
+        float moveDistance = speed * Time.deltaTime; 
+        CheckCollisions(moveDistance);
+        transform.Translate(Vector3.right * moveDistance);
+    }
+
+    void CheckCollisions(float moveDistance)
+    {
+        Ray ray = new Ray(transform.position, transform.forward);
+        RaycastHit hit;
+
+        if(Physics.Raycast(ray, out hit, moveDistance, collisionMask, QueryTriggerInteraction.Collide))
+        {
+            OnHitObject(hit);
+        }
+    }
+
+    void OnHitObject(RaycastHit hit)
+    {
+        print(hit.collider.gameObject.name);
+        Destroy(gameObject);
     }
 }
