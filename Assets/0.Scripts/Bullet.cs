@@ -7,8 +7,10 @@ public class Bullet : MonoBehaviour
 {
     public LayerMask collisionMask;
 
-    float speed = 10;
     float time = 0;
+
+    float speed = 10;
+    float damage = 1;
 
     public void SetSpeed(float _speed)
     {
@@ -17,10 +19,8 @@ public class Bullet : MonoBehaviour
     void Update()
     {
         time += Time.deltaTime;
-        if(time >= 5f)
-        {
+        if(time >= 5f)  //총알이 생성된지 5초 이상이 되면 삭제.
             Destroy(gameObject);
-        }
 
         float moveDistance = speed * Time.deltaTime; 
         CheckCollisions(moveDistance);
@@ -40,7 +40,11 @@ public class Bullet : MonoBehaviour
 
     void OnHitObject(RaycastHit hit)
     {
-        print(hit.collider.gameObject.name);
+        IDamageable damageableObject = hit.collider.GetComponent<IDamageable>();
+        if (damageableObject != null)
+        {
+            damageableObject.TakeHit(damage, hit);
+        }
         Destroy(gameObject);
     }
 }

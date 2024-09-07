@@ -5,7 +5,7 @@ using UnityEngine;
 //RequireComponent를 사용하는 스크립트를 GameObject에 추가하면 필요한 component가 GameObject에 자동으로 추가됩니다. 
 [RequireComponent (typeof (PlayerController))]
 [RequireComponent (typeof (GunController))]
-public class Player : MonoBehaviour
+public class Player : LivingEntity
 {
     PlayerController controller;
     GunController gunController;
@@ -18,6 +18,11 @@ public class Player : MonoBehaviour
         controller = GetComponent<PlayerController>();
         gunController = GetComponent<GunController>();
         camera = Camera.main;
+    }
+
+    protected override void Start()
+    {
+        base.Start();
     }
 
     void Update()

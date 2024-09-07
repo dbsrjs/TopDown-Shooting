@@ -4,25 +4,21 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class Enemy : MonoBehaviour
+public class Enemy : LivingEntity
 {
     NavMeshAgent pathfinder;
     Transform target;
 
-    private void Awake()
+    public void Awake()
     {
         pathfinder = GetComponent<NavMeshAgent>();
         target = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         StartCoroutine(UpdatePath());
-        
-    }
-
-    void Update()
-    {
         
     }
 
@@ -33,7 +29,9 @@ public class Enemy : MonoBehaviour
         while(target != null)
         {
             Vector3 targetPos = new Vector3(target.position.x, 0, target.position.z);
+            if(!dead)
             pathfinder.SetDestination(targetPos);
+
             yield return new WaitForSeconds(refreshRate);
         }
     }
