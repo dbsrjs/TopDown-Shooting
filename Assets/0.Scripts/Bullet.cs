@@ -12,7 +12,7 @@ public class Bullet : MonoBehaviour
     float speed = 10;
     float damage = 1;
 
-    float what_do_I_call_this_variable = 0.1f;
+    float what_do_I_call_this_variable = 0.1f;  //적의 이동과 총알의 이동이 같은 프레임에서 일어나면 충돌이 안 되는 일을 보안 해주는 놈.
 
     private void Start()
     {
