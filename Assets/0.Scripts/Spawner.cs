@@ -34,6 +34,8 @@ public class Spawner : MonoBehaviour
 
     bool isDisabled;        //플레이어가 죽었을 때 플레이어 관련 기능들을 비활성활 시켜줌.
 
+    public event System.Action<int> OnNewWave;
+
     private void Start()
     {
         playerEntity = FindObjectOfType<Player>();
@@ -116,6 +118,11 @@ public class Spawner : MonoBehaviour
             NextWave();
     }
 
+    void ResetPlayerPosition()
+    {
+        playerT.position = map.GetTileFromPosition(Vector3.zero).position + Vector3.up * 2.5f;
+    }
+
     void NextWave()
     {
         currentWaveNumber++;
@@ -125,6 +132,11 @@ public class Spawner : MonoBehaviour
 
             enemiesRemainingToSpawn = currentWave.enemyCount;
             enemiesRemaningAlive = enemiesRemainingToSpawn;
+
+            if(OnNewWave != null)
+                OnNewWave(currentWaveNumber);
+
+            ResetPlayerPosition();
         }
     }
 }
