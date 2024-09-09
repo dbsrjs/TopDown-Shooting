@@ -48,17 +48,24 @@ public class Player : LivingEntity
             controller.LookAt(point);
             crosshairs.transform.position = point;
             crosshairs.DetectTargets(ray);
+
+            if((new Vector2(point.x, point.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude > 1)  //조준점이 초에 너무 가까이가면 총이 회전하기 때문에 일정 거리 이상일 때만 작동하도록 함.
+                gunController.Aim(point);
         }
 
         #region 무기 조작
         
         //방아쇠를 당김
-        if (Input.GetMouseButton(0) || Input.GetKey(KeyCode.E))
+        if (Input.GetMouseButton(0))
             gunController.OnTriggerHold();
 
         //방아쇠를 놓음
         if (Input.GetMouseButtonUp(0))
             gunController.OnTriggerRelease();
+
+        //장전
+        if(Input.GetKeyDown(KeyCode.R))
+            gunController.Reload();
         #endregion
     }
 }

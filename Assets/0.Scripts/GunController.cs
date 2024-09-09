@@ -6,7 +6,7 @@ public class GunController : MonoBehaviour
 {
     public Transform  weaponHold;
     public Gun startGun;
-    Gun equipedGun; //«ˆ¿Á ¿Â¬¯¡ﬂ¿Œ √—
+    Gun equippedGun; //«ˆ¿Á ¿Â¬¯¡ﬂ¿Œ √—
 
     private void Start()
     {
@@ -16,11 +16,11 @@ public class GunController : MonoBehaviour
 
     public void EquipGun(Gun gunToEquip)
     {
-        if(equipedGun != null)
-            Destroy(equipedGun.gameObject);
+        if(equippedGun != null)
+            Destroy(equippedGun.gameObject);
 
-        equipedGun = Instantiate(gunToEquip, weaponHold.position, weaponHold.rotation) as Gun;
-        equipedGun.transform.parent = weaponHold;
+        equippedGun = Instantiate(gunToEquip, weaponHold.position, weaponHold.rotation) as Gun;
+        equippedGun.transform.parent = weaponHold;
     }
 
     /// <summary>
@@ -28,8 +28,8 @@ public class GunController : MonoBehaviour
     /// </summary>
     public void OnTriggerHold()
     {
-        if(equipedGun != null)
-            equipedGun.OnTriggerHold();
+        if(equippedGun != null)
+            equippedGun.OnTriggerHold();
     }
 
     /// <summary>
@@ -37,16 +37,30 @@ public class GunController : MonoBehaviour
     /// </summary>
     public void OnTriggerRelease()
     {
-        equipedGun.OnTriggerRelease();
+        equippedGun.OnTriggerRelease();
     }
 
+    public void Aim(Vector3 aimPoint)
+    {
+        if(equippedGun != null)
+        {
+            equippedGun.Aim(aimPoint);
+        }
+    }
 
+    public void Reload()
+    {
+        if (equippedGun != null)
+        {
+            equippedGun.Reload();
+        }
+    }
 
     public float GunHeight
     {
         get
         {
             return weaponHold.position.y;
-         }
+        }
     }
 }

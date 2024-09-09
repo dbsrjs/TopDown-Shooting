@@ -17,7 +17,7 @@ public class Crosshairs : MonoBehaviour
 
     void Update()
     {
-        transform.Rotate(Vector3.forward * -40 * Time.deltaTime);   
+        transform.Rotate(Vector3.forward * -40 * Time.deltaTime);
     }
 
     /// <summary>
