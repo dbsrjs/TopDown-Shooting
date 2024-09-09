@@ -118,6 +118,9 @@ public class Spawner : MonoBehaviour
             NextWave();
     }
 
+    /// <summary>
+    /// 새로운 웨이브가 시작 될 때마다 플레이어의 위치 초기화
+    /// </summary>
     void ResetPlayerPosition()
     {
         playerT.position = map.GetTileFromPosition(Vector3.zero).position + Vector3.up * 2.5f;

@@ -22,7 +22,7 @@ public class Bullet : MonoBehaviour
 
         if (initialCollisions.Length > 0)   //총알이 생성 됐을 때 어떤 충돌체 오브젝트와 이미 겹친 상태일 때
         {
-            OnHitObject(initialCollisions[0]);
+            OnHitObject(initialCollisions[0], transform.position);
         }
     }
 
@@ -43,25 +43,15 @@ public class Bullet : MonoBehaviour
         RaycastHit hit;
 
         if(Physics.Raycast(ray, out hit, moveDistance + what_do_I_call_this_variable, collisionMask, QueryTriggerInteraction.Collide))
-            OnHitObject(hit);
+            OnHitObject(hit.collider, hit.point);
     }
 
-    void OnHitObject(RaycastHit hit)
-    {
-        IDamageable damageableObject = hit.collider.GetComponent<IDamageable>();
-        if (damageableObject != null)
-        {
-            damageableObject.TakeHit(damage, hit);
-        }
-        Destroy(gameObject);
-    }
-
-    void OnHitObject(Collider c)
+    void OnHitObject(Collider c, Vector3 hitPoint)
     {
         IDamageable damageableObject = c.GetComponent<IDamageable>();
         if (damageableObject != null)
         {
-            damageableObject.TakeDamage(damage);
+            damageableObject.TakeHit(damage, hitPoint, transform.forward);
         }
         Destroy(gameObject);
     }

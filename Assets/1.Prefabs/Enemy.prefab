@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startHealth: 3
+  deathEffect: {fileID: 5169954813099482320, guid: 2a760701377f5aa44ab6c3d94bd362a9, type: 3}
 --- !u!33 &2831352415839436901
 MeshFilter:
   m_ObjectHideFlags: 0

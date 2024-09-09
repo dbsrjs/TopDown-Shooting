@@ -16,11 +16,13 @@ public class Enemy : LivingEntity
     };
     State currentState; //현재 상태
 
+
     NavMeshAgent pathfinder;       //nav
     Transform target;              //Player
     LivingEntity targetEntitiy;
 
     Material skinMaterial;         //공격할 때 쓸 메테리얼
+    public ParticleSystem deathEffect; //사망 파티클
 
     Color originalColor;
 
@@ -81,6 +83,15 @@ public class Enemy : LivingEntity
                 }
             }
         }
+    }
+
+    public override void TakeHit(float damage, Vector3 hitPoint, Vector3 hitDirection)
+    {
+        if(damage >= health)    //죽음
+        {
+            Destroy(Instantiate(deathEffect.gameObject, hitPoint, Quaternion.FromToRotation(Vector3.left, hitDirection)) as GameObject, deathEffect.startLifetime);
+        }
+        base.TakeHit(damage, hitPoint, hitDirection);
     }
 
     void OnTargetDeath()
