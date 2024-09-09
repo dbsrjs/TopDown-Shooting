@@ -8,7 +8,6 @@ public class GunController : MonoBehaviour
     public Gun startGun;
     Gun equipedGun; //ÇöÀç ÀåÂøÁßÀÎ ÃÑ
 
-
     private void Start()
     {
         if (startGun != null)
