@@ -7,9 +7,12 @@ using UnityEngine;
 [RequireComponent (typeof (GunController))]
 public class Player : LivingEntity
 {
+    Camera camera;
     PlayerController controller;
     GunController gunController;
-    Camera camera;
+
+    public Crosshairs crosshairs;    //조준점
+
 
     public float speed = 5;
 
@@ -34,15 +37,17 @@ public class Player : LivingEntity
 
         //바라보는 곳
         Ray ray = camera.ScreenPointToRay(Input.mousePosition); //마우스 포인터의 위치를 반환해줌
-        Plane groundPlane = new Plane(Vector3.up, Vector3Int.zero);
+        Plane groundPlane = new Plane(Vector3.up,Vector3.up * gunController.GunHeight);
         float rayDistance;
         
         if(groundPlane.Raycast(ray, out rayDistance))   //out : 변수를 참조로 전달함.
         {
             //ray가 ground와 부딪힌거임.
             Vector3 point = ray.GetPoint(rayDistance);  //마우스 포인터의 위치를 보여줌
-            Debug.DrawLine(ray.origin, point, Color.red);   //ray의 시작점부터 끝점까지를 빨간색 선으로 표시해줌.
+            //Debug.DrawLine(ray.origin, point, Color.red);   //ray의 시작점부터 끝점까지를 빨간색 선으로 표시해줌.
             controller.LookAt(point);
+            crosshairs.transform.position = point;
+            crosshairs.DetectTargets(ray);
         }
 
         #region 무기 조작

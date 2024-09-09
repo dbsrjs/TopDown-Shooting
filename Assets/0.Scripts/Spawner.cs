@@ -77,6 +77,9 @@ public class Spawner : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 적 생성
+    /// </summary>
     IEnumerator SpawnEnemy()
     {
         float spawnDelay = 1;       //생성 대기 시간
@@ -89,7 +92,7 @@ public class Spawner : MonoBehaviour
         }
         Material tileMat = spawnTile.GetComponent<Renderer>().material;
 
-        Color initialColor = tileMat.color; //기본 색
+        Color initialColor = Color.white; //기본 색
         Color flashColor = Color.red;       //플레쉬 색
         float spawnTimer = 0; 
 
