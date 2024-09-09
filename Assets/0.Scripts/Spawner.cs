@@ -4,13 +4,7 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-    [System.Serializable]   //Inspector
-    public class Wave
-    {
-        public int enemyCount;          //적의 수
-        public float timeBetweenSpawns; //스폰 간격
-    }
-
+    [SerializeField] private bool devMode;
     LivingEntity playerEntity;
     Transform playerT;
 
@@ -26,11 +20,11 @@ public class Spawner : MonoBehaviour
 
     MapGenerator map;
 
-    float timeBetweenCampingChecks = 2; //얼마나 자주 존버를 체크할 것인가.
-    float campThresholdDistance = 1.5f; //존버한걸로 간주되지 않기 위해서 플레이어가 캠핑 체크 사이에 움직여야할 최소 거리
-    float nextCampCheckTime;            //다음 존버를 체크하는 시간. 
+    float timeBetweenCampingChecks = 2;  //얼마나 자주 존버를 체크할 것인가.
+    float campThresholdDistance = 1.5f;  //존버한걸로 간주되지 않기 위해서 플레이어가 캠핑 체크 사이에 움직여야할 최소 거리
+    float nextCampCheckTime;             //다음 존버를 체크하는 시간. 
     Vector3 campPositionOld;             //가장 최근에 존버 체크를 했을 때 플레이어가 있었던 장소
-    bool isCamping;                     //캠핑 여부     true : 존버중
+    bool isCamping;                      //존버 여부     true : 존버중
 
     bool isDisabled;        //플레이어가 죽었을 때 플레이어 관련 기능들을 비활성활 시켜줌.
 
@@ -61,12 +55,24 @@ public class Spawner : MonoBehaviour
                 campPositionOld = playerT.position;
             }
 
-            if (enemiesRemainingToSpawn > 0 && Time.time > nextSpawnTime)
+            if ((enemiesRemainingToSpawn > 0 || currentWave.infinite) && Time.time > nextSpawnTime)
             {
                 enemiesRemainingToSpawn--;
                 nextSpawnTime = Time.time + currentWave.timeBetweenSpawns;
 
-                StartCoroutine(SpawnEnemy());
+                StartCoroutine("SpawnEnemy");
+            }
+        }
+
+        if(devMode)
+        {
+            if (Input.GetKeyDown(KeyCode.F1))
+            {
+                StopCoroutine("SpawnEnemy");    //적 스폰 중지
+                foreach(Enemy enemy in FindObjectsOfType<Enemy>())  //적 삭제
+                    Destroy(enemy.gameObject);
+
+                NextWave(); //다음 라운드로 이동
             }
         }
     }
@@ -97,6 +103,7 @@ public class Spawner : MonoBehaviour
 
         Enemy spawnedEnemy = Instantiate(enemy, spawnTile.position + Vector3.up, Quaternion.identity) as Enemy;
         spawnedEnemy.OnDeath += OnEnemyDeath;
+        spawnedEnemy.SetCharacteristics(currentWave.moveSpeed, currentWave.hitsToKillPlayer, currentWave.enemyHealth, currentWave.skinColor);
     }
 
     /// <summary>
@@ -129,6 +136,7 @@ public class Spawner : MonoBehaviour
     void NextWave()
     {
         currentWaveNumber++;
+
         if (currentWaveNumber - 1 < waves.Length)
         {
             currentWave = waves[currentWaveNumber - 1];
@@ -141,5 +149,17 @@ public class Spawner : MonoBehaviour
 
             ResetPlayerPosition();
         }
+    }
+
+    [System.Serializable]   //Inspector
+    public class Wave
+    {
+        public bool infinite;           //현재 웨이브가 무한한가?
+        public int enemyCount;          //적의 수
+        public float timeBetweenSpawns; //스폰 간격
+        public float moveSpeed;         //이동 속도
+        public int hitsToKillPlayer;
+        public float enemyHealth;       //적 HP
+        public Color skinColor;         //색상
     }
 }

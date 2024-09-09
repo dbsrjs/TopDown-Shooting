@@ -41,12 +41,14 @@ public class Enemy : LivingEntity
     public void Awake()
     {
         pathfinder = GetComponent<NavMeshAgent>();
-        skinMaterial = GetComponent<Renderer>().material;
 
-        if (GameObject.FindGameObjectsWithTag("Player") != null)
+        if (GameObject.FindGameObjectWithTag("Player") != null)
         {
+            hasTarget = true;
+
             target = GameObject.FindGameObjectWithTag("Player").transform;
             targetEntitiy = target.GetComponent<LivingEntity>();
+
             myCollisionRadius = GetComponent<CapsuleCollider>().radius;
             targetCollisionRadius = target.GetComponent<CapsuleCollider>().radius;
         }
@@ -55,17 +57,14 @@ public class Enemy : LivingEntity
     protected override void Start()
     {
         base.Start();
-        originalColor = skinMaterial.color;
 
-        if (GameObject.FindGameObjectsWithTag("Player") != null)
+        if (hasTarget)
         {
             currentState = State.Chasing;
-            hasTarget = true;
 
             targetEntitiy.OnDeath += OnTargetDeath;
             StartCoroutine(UpdatePath());
         }
-
     }
     
     void Update()
@@ -85,6 +84,30 @@ public class Enemy : LivingEntity
         }
     }
 
+    /// <summary>
+    /// 적 특징 정보 정의
+    /// moveSpeed : 이동 속도
+    /// hitsToKillPlayer : 플레이어 HP / hitsToKillPlayer
+    /// enemyHealth : 적(자신) HP
+    /// skinColor : 색갈
+    /// </summary>
+    public void SetCharacteristics(float moveSpeed, int hitsToKillPlayer, float enemyHealth, Color skinColor)
+    {
+        pathfinder.speed = moveSpeed;
+
+        if(hasTarget)
+            damage = Mathf.Ceil(targetEntitiy.startHealth / hitsToKillPlayer);
+
+        startHealth = enemyHealth;
+
+        skinMaterial = GetComponent<Renderer>().material;
+        skinMaterial.color = skinColor;
+        originalColor = skinMaterial.color;
+    }
+
+    /// <summary>
+    /// 피격 당함
+    /// </summary>
     public override void TakeHit(float damage, Vector3 hitPoint, Vector3 hitDirection)
     {
         if(damage >= health)    //죽음

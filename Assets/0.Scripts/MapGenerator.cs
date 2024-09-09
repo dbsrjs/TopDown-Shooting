@@ -10,6 +10,7 @@ public class MapGenerator : MonoBehaviour
 
     public Transform tilePrefab;        //타일
     public Transform obstaclePrefab;    //장애물
+    public Transform mapFloor ; 
     public Transform navmeshFloor; 
     public Transform navmeshMaskPrefab; //나브메쉬
 
@@ -27,7 +28,7 @@ public class MapGenerator : MonoBehaviour
 
     Map currentMap;
 
-    private void Start()
+    private void Awake()
     {
         FindObjectOfType<Spawner>().OnNewWave += OnNewWave;
     }
@@ -46,7 +47,6 @@ public class MapGenerator : MonoBehaviour
         currentMap = maps[mapIndex];
         tileMap = new Transform[currentMap.mapSize.x, currentMap.mapSize.y];
         System.Random prng = new System.Random(currentMap.seed);
-        GetComponent<BoxCollider>().size = new Vector3(currentMap.mapSize.x * tileSize, 0.05f, currentMap.mapSize.y * tileSize);
 
         //좌표 생성
         alltileCoords = new List<Coord>();
@@ -136,9 +136,11 @@ public class MapGenerator : MonoBehaviour
         Transform maskBottom = Instantiate(navmeshMaskPrefab, Vector3.back * (currentMap.mapSize.y + maxMapSize.y) / 4f * tileSize, Quaternion.identity) as Transform;
         maskBottom.parent = mapHolder;
         maskBottom.localScale = new Vector3(maxMapSize.x, 1, (maxMapSize.y - currentMap.mapSize.y) / 2f) * tileSize;
-        #endregion
 
         navmeshFloor.localScale = new Vector3(maxMapSize.x, maxMapSize.y) * tileSize;
+
+        mapFloor.localScale = new Vector3(currentMap.mapSize.x * tileSize, currentMap.mapSize.y * tileSize);
+        #endregion
     }
 
     /// <summary>

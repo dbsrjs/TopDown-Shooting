@@ -48,7 +48,7 @@ public class Player : LivingEntity
         #region 무기 조작
         
         //방아쇠를 당김
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) || Input.GetKey(KeyCode.E))
             gunController.OnTriggerHold();
 
         //방아쇠를 놓음
