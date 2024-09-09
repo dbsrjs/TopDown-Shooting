@@ -45,10 +45,15 @@ public class Player : LivingEntity
             controller.LookAt(point);
         }
 
-        //무기 조작
-        if(Input.GetMouseButton(0))
-        {
-            gunController.Shoot();
-        }
+        #region 무기 조작
+        
+        //방아쇠를 당김
+        if (Input.GetMouseButton(0))
+            gunController.OnTriggerHold();
+
+        //방아쇠를 놓음
+        if (Input.GetMouseButtonUp(0))
+            gunController.OnTriggerRelease();
+        #endregion
     }
 }

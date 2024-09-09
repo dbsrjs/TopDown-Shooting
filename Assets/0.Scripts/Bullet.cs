@@ -6,6 +6,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public LayerMask collisionMask;
+    public Color trailColor;
 
     float time = 0;
 
@@ -21,9 +22,9 @@ public class Bullet : MonoBehaviour
         Collider[] initialCollisions = Physics.OverlapSphere(transform.position, 0.1f, collisionMask);
 
         if (initialCollisions.Length > 0)   //총알이 생성 됐을 때 어떤 충돌체 오브젝트와 이미 겹친 상태일 때
-        {
             OnHitObject(initialCollisions[0], transform.position);
-        }
+
+        GetComponent<TrailRenderer>().material.SetColor("_TintColor", trailColor);
     }
 
     public void SetSpeed(float _speed)
