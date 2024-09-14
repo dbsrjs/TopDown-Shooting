@@ -5,13 +5,12 @@ using UnityEngine;
 public class GunController : MonoBehaviour
 {
     public Transform  weaponHold;
-    public Gun startGun;
+    public Gun[] allGuns;
     Gun equippedGun; //ÇöÀç ÀåÂøÁßÀÎ ÃÑ
 
     private void Start()
     {
-        if (startGun != null)
-            EquipGun(startGun);
+        
     }
 
     public void EquipGun(Gun gunToEquip)
@@ -21,6 +20,11 @@ public class GunController : MonoBehaviour
 
         equippedGun = Instantiate(gunToEquip, weaponHold.position, weaponHold.rotation) as Gun;
         equippedGun.transform.parent = weaponHold;
+    }
+
+    public void EquipGun(int weaponIndex)
+    {
+        EquipGun(allGuns[weaponIndex]);
     }
 
     /// <summary>

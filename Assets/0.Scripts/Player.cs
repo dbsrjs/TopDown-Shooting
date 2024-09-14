@@ -21,11 +21,18 @@ public class Player : LivingEntity
         controller = GetComponent<PlayerController>();
         gunController = GetComponent<GunController>();
         camera = Camera.main;
+        FindObjectOfType<Spawner>().OnNewWave += OnNewWave;
     }
 
     protected override void Start()
     {
         base.Start();
+    }
+
+    void OnNewWave(int waveNumber)
+    {
+        health = startHealth;
+        gunController.EquipGun(waveNumber - 1);
     }
 
     void Update()

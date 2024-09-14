@@ -14,7 +14,7 @@ public class Gun : MonoBehaviour
     public FireMode fireMode;        //상태
 
     public Bullet bullet;            //총알
-    public Transform bulletSpawn;    //총구(총알을 생성할 위치)
+    public Transform[] bulletSpawn;    //총구(총알을 생성할 위치)
 
     public float shotTime = 100;      //연사력
     public float bulletSpeed = 35;    //총알 속도
@@ -24,7 +24,7 @@ public class Gun : MonoBehaviour
 
     bool triggerReleasedSinceLastShot;//쏠 준비 됨?
     public int bulletPerMag;    //탄창 최대 크기
-    [SerializeField] int bulletRemainingInMag;   //현재 탄장에 남아 있는 총알 개수
+    int bulletRemainingInMag;   //현재 탄장에 남아 있는 총알 개수
 
     [Header("장전")]
     bool isReloading;                 //장전 중?
@@ -89,17 +89,21 @@ public class Gun : MonoBehaviour
                     return;
             }
 
-            if (bulletRemainingInMag != 0)
+            for (int i = 0; i < bulletSpawn.Length; i++)
             {
+                if (bulletRemainingInMag == 0)
+                {
+                    break;
+                }
                 bulletRemainingInMag--;
                 nextshottime = Time.time + shotTime / 1000;
-                Bullet newBullet = Instantiate(bullet, bulletSpawn.position, bulletSpawn.rotation);
+                Bullet newBullet = Instantiate(bullet, bulletSpawn[i].position, bulletSpawn[i].rotation);
                 newBullet.SetSpeed(bulletSpeed);
             }
 
             Instantiate(shell, shellEjection.position, shellEjection.rotation);
             muzzleFlash.Activate();
-            transform.localPosition -= Vector3.forward * Random.Range(kickMinMax.x, kickMinMax.y);
+            transform.localPosition -= Vector3.right * Random.Range(kickMinMax.x, kickMinMax.y);
             recoilAngle += Random.Range(recoilAngleMinMax.x, recoilAngleMinMax.y);
             recoilAngle = Mathf.Clamp(recoilAngle, 0, 30);
         }
@@ -143,8 +147,6 @@ public class Gun : MonoBehaviour
         if(!isReloading)
         {
             transform.LookAt(aimPoint);
-
-            transform.Rotate(0, -90, 0);
         }
     }
 
