@@ -1,14 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Search;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
+    public static AudioManager instance;
+
     public enum AudioChannel { Master, Sfx, Music };
-    float masterVolumePercent = 1f;     //¸¶½ºÅÍ º¼·ý
-    float sfxVolumePercent = 1f;        //È¿°ú º¼·ý
-    float musicVolumePercent = 0.1f;    //À½¾Ç º¼·ý
+    public float masterVolumePercent { get; private set; }     //¸¶½ºÅÍ º¼·ý
+    public float sfxVolumePercent { get; private set; }        //È¿°ú º¼·ý
+    public float musicVolumePercent { get; private set; }      //À½¾Ç º¼·ý
 
     AudioSource sfx2DSource;
     AudioSource[] musicSources;
@@ -19,14 +20,8 @@ public class AudioManager : MonoBehaviour
 
     SoundLibrary library;
 
-    public static AudioManager instance;
     private void Awake()
     {
-
-        masterVolumePercent = PlayerPrefs.GetFloat("master vol", masterVolumePercent);
-        sfxVolumePercent = PlayerPrefs.GetFloat("sfx vol", sfxVolumePercent);
-        musicVolumePercent = PlayerPrefs.GetFloat("music vol", musicVolumePercent);
-
         if (instance != null)
             Destroy(gameObject);
         else
@@ -50,8 +45,14 @@ public class AudioManager : MonoBehaviour
 
 
             audioListener = FindObjectOfType<AudioListener>().transform;
-            playerT = FindObjectOfType<Player>().transform;
+
+            if(FindObjectOfType<Player>() != null)
+                playerT = FindObjectOfType<Player>().transform;
         }
+
+        masterVolumePercent = PlayerPrefs.GetFloat("master vol", 1);
+        sfxVolumePercent = PlayerPrefs.GetFloat("sfx vol", 1);
+        musicVolumePercent = PlayerPrefs.GetFloat("music vol", 1);
     }
 
     private void Update()
@@ -81,6 +82,7 @@ public class AudioManager : MonoBehaviour
         PlayerPrefs.SetFloat("master vol", masterVolumePercent);
         PlayerPrefs.SetFloat("sfx vol", sfxVolumePercent);
         PlayerPrefs.SetFloat("music vol", musicVolumePercent);
+        PlayerPrefs.Save();
     }
 
     public void PlayMusic(AudioClip clip, float fadeDuration = 1)
