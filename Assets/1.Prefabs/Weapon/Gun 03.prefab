@@ -969,6 +969,8 @@ MonoBehaviour:
   recoilAngleMinMax: {x: 3, y: 5}
   recoilMoveSettleTime: 0.1
   recoilRotationSettleTime: 0.1
+  shootAudio: {fileID: 8300000, guid: 5cc84218134952a438297893748b1ff2, type: 3}
+  reloadAudio: {fileID: 8300000, guid: 71af42e0ca98bf34a892fa38bda39cdc, type: 3}
 --- !u!114 &11495274
 MonoBehaviour:
   m_ObjectHideFlags: 0

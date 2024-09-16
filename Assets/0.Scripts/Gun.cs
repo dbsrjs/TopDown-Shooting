@@ -13,7 +13,7 @@ public class Gun : MonoBehaviour
 
     public FireMode fireMode;        //상태
 
-    public Bullet bullet;            //총알
+    public Bullet bullet;               //총알
     public Transform[] bulletSpawn;    //총구(총알을 생성할 위치)
 
     public float shotTime = 100;      //연사력
@@ -46,6 +46,10 @@ public class Gun : MonoBehaviour
     float recoilAngle;  //반동 각도
     public float recoilMoveSettleTime = 0.1f;
     public float recoilRotationSettleTime = 0.1f;
+
+    [Header("Audio")]
+    public AudioClip shootAudio;    //사격
+    public AudioClip reloadAudio;   //장전
 
     private void Awake()
     {
@@ -106,6 +110,8 @@ public class Gun : MonoBehaviour
             transform.localPosition -= Vector3.right * Random.Range(kickMinMax.x, kickMinMax.y);
             recoilAngle += Random.Range(recoilAngleMinMax.x, recoilAngleMinMax.y);
             recoilAngle = Mathf.Clamp(recoilAngle, 0, 30);
+
+            AudioManager.instance.PlaySound(shootAudio, transform.position);
         }
     }
 
@@ -115,7 +121,10 @@ public class Gun : MonoBehaviour
     public void Reload()
     {
         if(!isReloading && bulletRemainingInMag != bulletPerMag)    //장전중이 아니고, 현재 탄약이 최대 탄약과 같지 않다면
+        {
             StartCoroutine(AnimateReload());
+            AudioManager.instance.PlaySound(reloadAudio, transform.position);
+        }
     }
 
     IEnumerator AnimateReload()
