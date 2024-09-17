@@ -369,14 +369,14 @@ MonoBehaviour:
   - {fileID: 411416}
   - {fileID: 487730}
   - {fileID: 485172}
-  shotTime: 100
-  bulletSpeed: 35
-  burstCount: 3
-  bulletPerMag: 10
+  shotTime: 105
+  bulletSpeed: 45
+  burstCount: -1
+  bulletPerMag: 18
   reloadTime: 0.2
   shell: {fileID: 2169018074690752084, guid: 91a5a47869c902240b6bf19a9077e27f, type: 3}
   shellEjection: {fileID: 478148}
-  kickMinMax: {x: 0.05, y: 0.2}
+  kickMinMax: {x: 0.07, y: 0.24}
   recoilAngleMinMax: {x: 3, y: 5}
   recoilMoveSettleTime: 0.1
   recoilRotationSettleTime: 0.1

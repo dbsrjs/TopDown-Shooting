@@ -300,13 +300,13 @@ MonoBehaviour:
   bulletSpawn:
   - {fileID: 450644}
   shotTime: 100
-  bulletSpeed: 35
-  burstCount: 3
-  bulletPerMag: 5
+  bulletSpeed: 40
+  burstCount: -1
+  bulletPerMag: 12
   reloadTime: 0.3
   shell: {fileID: 2169018074690752084, guid: 91a5a47869c902240b6bf19a9077e27f, type: 3}
   shellEjection: {fileID: 429154}
-  kickMinMax: {x: 0.05, y: 0.2}
+  kickMinMax: {x: 0.04, y: 0.15}
   recoilAngleMinMax: {x: 3, y: 5}
   recoilMoveSettleTime: 0.1
   recoilRotationSettleTime: 0.1

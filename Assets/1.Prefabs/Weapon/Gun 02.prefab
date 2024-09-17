@@ -589,10 +589,10 @@ MonoBehaviour:
   bullet: {fileID: 8348254423690228836, guid: ffd0427815ee4904f8da4ab6863fe9e2, type: 3}
   bulletSpawn:
   - {fileID: 417700}
-  shotTime: 100
-  bulletSpeed: 35
-  burstCount: 3
-  bulletPerMag: 10
+  shotTime: 95
+  bulletSpeed: 45
+  burstCount: 4
+  bulletPerMag: 20
   reloadTime: 0.3
   shell: {fileID: 2169018074690752084, guid: 91a5a47869c902240b6bf19a9077e27f, type: 3}
   shellEjection: {fileID: 463886}

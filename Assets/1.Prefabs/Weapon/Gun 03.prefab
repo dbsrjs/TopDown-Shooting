@@ -958,14 +958,14 @@ MonoBehaviour:
   bullet: {fileID: 8348254423690228836, guid: ffd0427815ee4904f8da4ab6863fe9e2, type: 3}
   bulletSpawn:
   - {fileID: 488908}
-  shotTime: 100
-  bulletSpeed: 35
-  burstCount: 3
-  bulletPerMag: 10
-  reloadTime: 0.3
+  shotTime: 95
+  bulletSpeed: 50
+  burstCount: -1
+  bulletPerMag: 15
+  reloadTime: 0.37
   shell: {fileID: 2169018074690752084, guid: 91a5a47869c902240b6bf19a9077e27f, type: 3}
   shellEjection: {fileID: 487030}
-  kickMinMax: {x: 0.05, y: 0.2}
+  kickMinMax: {x: 0.07, y: 0.22}
   recoilAngleMinMax: {x: 3, y: 5}
   recoilMoveSettleTime: 0.1
   recoilRotationSettleTime: 0.1

@@ -1,8 +1,11 @@
-/*using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
+#if UNITY_EDITOR
+using UnityEditor;  // UnityEditor 네임스페이스는 에디터에서만 사용
+#endif
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(MapGenerator))]
 public class MapEditor : Editor
 {
@@ -17,4 +20,5 @@ public class MapEditor : Editor
         if (GUILayout.Button("Generate Map"))    //Inspector에 'Generate Map'이라는 버튼을 생성함
             map.GenerateMap();
     }
-}*/
+}
+#endif

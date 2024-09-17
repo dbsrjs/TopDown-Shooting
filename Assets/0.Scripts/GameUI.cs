@@ -3,17 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameUI : MonoBehaviour
 {
     public Image fadePlane;
     public GameObject GameOverUI;
 
-    public RectTransform newWaveBanner;
-    public Text newWaveTitle;
-    public Text newWaveEnemyCount;
+    public RectTransform newWaveBanner; //새로운 웨이브가 시작 할 때 뜨는 베너
+    public Text newWaveTitle;           //베너에 뜨는 현재 웨이브
+    public Text newWaveEnemyCount;      //현재 웨이브에서 스폰되는 적 수
+    public Text scoreText;              //점수
+    public Text gameoverScoreText;      //게임 오버 점수
+    public RectTransform healthBar;     //HP  Bar
 
     Spawner spawner;
+    Player player;
 
     private void Awake()
     {
@@ -23,20 +28,41 @@ public class GameUI : MonoBehaviour
 
     void Start()
     {
-        FindObjectOfType<Player>().OnDeath += OnGameOver;
+        player = FindObjectOfType<Player>();
+        player.OnDeath += OnGameOver;
     }
 
+    private void Update()
+    {
+        scoreText.text = ScoreKeeper.score.ToString("D6");
+        float healthPercent = 0;
+        if(player != null)
+            healthPercent = player.health / player.startHealth;
+
+        healthBar.localScale = new Vector3(healthPercent, 1, 1);
+    }
+
+    /// <summary>
+    /// 베너 정보
+    /// </summary>
     void OnNewWave(int waveNumber)
     {
+        //현재 웨이브
         string[] numbers = { "One", "Two", "Tree", "Four", "Five" };
         newWaveTitle.text = $"- Wave {numbers[waveNumber - 1]} -";
+
+        //스폰할 적 수
         string enemyCountString = ((spawner.waves[waveNumber - 1].infinite) ? "Infinite" : spawner.waves[waveNumber - 1].enemyCount + "");
         newWaveEnemyCount.text = $"Enemies: {enemyCountString}";
 
+        //애니메이션
         StopCoroutine("AnimateNewWaveBanner");
         StartCoroutine("AnimateNewWaveBanner");
     }
 
+    /// <summary>
+    /// 베너 애니메이션
+    /// </summary>
     IEnumerator AnimateNewWaveBanner()
     {
         float delayTime = 2f;
@@ -62,6 +88,10 @@ public class GameUI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 죽었을 때 Fade 올리기
+    /// </summary>
+    /// <returns></returns>
     IEnumerator Fade(Color from, Color to, float time)
     {
         float speed = 1 / time;
@@ -80,7 +110,11 @@ public class GameUI : MonoBehaviour
     /// </summary>
     void OnGameOver()
     {
-        StartCoroutine(Fade(Color.clear, Color.black, 1));
+        Cursor.visible = true;
+        StartCoroutine(Fade(Color.clear, new Color(0, 0, 0, 0.95f), 1));
+        gameoverScoreText.text = scoreText.text;
+        scoreText.gameObject.SetActive(false);
+        healthBar.transform.parent.gameObject.SetActive(false);
         GameOverUI.SetActive(true);
     }
 
@@ -89,6 +123,14 @@ public class GameUI : MonoBehaviour
     /// </summary>
     public void StartNewGame()
     {
-        Application.LoadLevel("Game");
+        SceneManager.LoadScene("Game");
+    }
+
+    /// <summary>
+    /// 메뉴로 돌아가기
+    /// </summary>
+    public void ReturnToMenu()
+    {
+        SceneManager.LoadScene("Menu");
     }
 }

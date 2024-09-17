@@ -46,6 +46,10 @@ public class Menu : MonoBehaviour
     /// </summary>
     public void Quit()
     {
+        #if UNITY_EDITOR
+        // 이 코드는 Unity 에디터에서만 실행됨
+        UnityEditor.EditorApplication.isPlaying = false;    //빌드 전 게임 종료
+        #endif
         Application.Quit();
     }
 

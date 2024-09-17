@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//RequireComponent¸¦ »ç¿ëÇÏ´Â ½ºÅ©¸³Æ®¸¦ GameObject¿¡ Ãß°¡ÇÏ¸é ÇÊ¿äÇÑ component°¡ GameObject¿¡ ÀÚµ¿À¸·Î Ãß°¡µË´Ï´Ù. 
+//RequireComponentë¥¼ ì‚¬ìš©í•˜ëŠ” ìŠ¤í¬ë¦½íŠ¸ë¥¼ GameObjectì— ì¶”ê°€í•˜ë©´ í•„ìš”í•œ componentê°€ GameObjectì— ìë™ìœ¼ë¡œ ì¶”ê°€ë©ë‹ˆë‹¤. 
 [RequireComponent (typeof (PlayerController))]
 [RequireComponent (typeof (GunController))]
 public class Player : LivingEntity
@@ -11,7 +11,7 @@ public class Player : LivingEntity
     PlayerController controller;
     GunController gunController;
 
-    public Crosshairs crosshairs;    //Á¶ÁØÁ¡
+    public Crosshairs crosshairs;    //ì¡°ì¤€ì 
 
 
     public float speed = 5;
@@ -37,47 +37,56 @@ public class Player : LivingEntity
 
     void Update()
     {
-        //ÀÌµ¿ ·ÎÁ÷
+        //ì´ë™ ë¡œì§
         Vector3 moveInout = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
         Vector3 moveVelocity = moveInout.normalized * speed;
         controller.Move(moveVelocity); 
 
-        //¹Ù¶óº¸´Â °÷
-        Ray ray = camera.ScreenPointToRay(Input.mousePosition); //¸¶¿ì½º Æ÷ÀÎÅÍÀÇ À§Ä¡¸¦ ¹İÈ¯ÇØÁÜ
+        //ë°”ë¼ë³´ëŠ” ê³³
+        Ray ray = camera.ScreenPointToRay(Input.mousePosition); //ë§ˆìš°ìŠ¤ í¬ì¸í„°ì˜ ìœ„ì¹˜ë¥¼ ë°˜í™˜í•´ì¤Œ
         Plane groundPlane = new Plane(Vector3.up,Vector3.up * gunController.GunHeight);
         float rayDistance;
         
-        if(groundPlane.Raycast(ray, out rayDistance))   //out : º¯¼ö¸¦ ÂüÁ¶·Î Àü´ŞÇÔ.
+        if(groundPlane.Raycast(ray, out rayDistance))   //out : ë³€ìˆ˜ë¥¼ ì°¸ì¡°ë¡œ ì „ë‹¬í•¨.
         {
-            //ray°¡ ground¿Í ºÎµúÈù°ÅÀÓ.
-            Vector3 point = ray.GetPoint(rayDistance);  //¸¶¿ì½º Æ÷ÀÎÅÍÀÇ À§Ä¡¸¦ º¸¿©ÁÜ
-            //Debug.DrawLine(ray.origin, point, Color.red);   //rayÀÇ ½ÃÀÛÁ¡ºÎÅÍ ³¡Á¡±îÁö¸¦ »¡°£»ö ¼±À¸·Î Ç¥½ÃÇØÁÜ.
+            //rayê°€ groundì™€ ë¶€ë”ªíŒê±°ì„.
+            Vector3 point = ray.GetPoint(rayDistance);  //ë§ˆìš°ìŠ¤ í¬ì¸í„°ì˜ ìœ„ì¹˜ë¥¼ ë³´ì—¬ì¤Œ
+            //Debug.DrawLine(ray.origin, point, Color.red);   //rayì˜ ì‹œì‘ì ë¶€í„° ëì ê¹Œì§€ë¥¼ ë¹¨ê°„ìƒ‰ ì„ ìœ¼ë¡œ í‘œì‹œí•´ì¤Œ.
             controller.LookAt(point);
             crosshairs.transform.position = point;
             crosshairs.DetectTargets(ray);
 
-            if((new Vector2(point.x, point.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude > 1)  //Á¶ÁØÁ¡ÀÌ ÃÊ¿¡ ³Ê¹« °¡±îÀÌ°¡¸é ÃÑÀÌ È¸ÀüÇÏ±â ¶§¹®¿¡ ÀÏÁ¤ °Å¸® ÀÌ»óÀÏ ¶§¸¸ ÀÛµ¿ÇÏµµ·Ï ÇÔ.
+            if((new Vector2(point.x, point.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude > 1)  //ì¡°ì¤€ì ì´ ì´ì— ë„ˆë¬´ ê°€ê¹Œì´ê°€ë©´ ì´ì´ íšŒì „í•˜ê¸° ë•Œë¬¸ì— ì¼ì • ê±°ë¦¬ ì´ìƒì¼ ë•Œë§Œ ì‘ë™í•˜ë„ë¡ í•¨.
                 gunController.Aim(point);
         }
 
-        #region ¹«±â Á¶ÀÛ
+        if(transform.position.y < -7)
+        {
+            TakeDamage(health);
+        }
+
+        #region ë¬´ê¸° ì¡°ì‘
         
-        //¹æ¾Æ¼è¸¦ ´ç±è
+        //ë°©ì•„ì‡ ë¥¼ ë‹¹ê¹€
         if (Input.GetMouseButton(0))
             gunController.OnTriggerHold();
 
-        //¹æ¾Æ¼è¸¦ ³õÀ½
+        //ë°©ì•„ì‡ ë¥¼ ë†“ìŒ
         if (Input.GetMouseButtonUp(0))
             gunController.OnTriggerRelease();
 
-        //ÀåÀü
+        //ì¥ì „
         if(Input.GetKeyDown(KeyCode.R))
             gunController.Reload();
         #endregion
     }
 
+    /// <summary>
+    /// ì‚¬ë§
+    /// </summary>
     public override void Die()
     {
+        ScoreKeeper.instance.ReScore();
         AudioManager.instance.PlaySound("Player Death", transform.position);
         base.Die();
     }

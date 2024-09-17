@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 182552176080990243}
   m_Layer: 0
   m_Name: Bullet
-  m_TagString: Untagged
+  m_TagString: bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -99,7 +99,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   collisionMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 320
   trailColor: {r: 0.9098039, g: 0.8392157, b: 0.2784314, a: 0.25490198}
 --- !u!96 &182552176080990243
 TrailRenderer:

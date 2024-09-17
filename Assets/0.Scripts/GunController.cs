@@ -8,11 +8,6 @@ public class GunController : MonoBehaviour
     public Gun[] allGuns;
     Gun equippedGun; //현재 장착중인 총
 
-    private void Start()
-    {
-        
-    }
-
     public void EquipGun(Gun gunToEquip)
     {
         if(equippedGun != null)
@@ -44,6 +39,9 @@ public class GunController : MonoBehaviour
         equippedGun.OnTriggerRelease();
     }
 
+    /// <summary>
+    /// 조준점 바라봄
+    /// </summary>
     public void Aim(Vector3 aimPoint)
     {
         if(equippedGun != null)
@@ -52,6 +50,9 @@ public class GunController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 재장전
+    /// </summary>
     public void Reload()
     {
         if (equippedGun != null)

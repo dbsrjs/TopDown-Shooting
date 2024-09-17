@@ -16,17 +16,18 @@ public class Enemy : LivingEntity
     };
     State currentState; //현재 상태
 
+    public static event Action OnDeathStatic;
 
     NavMeshAgent pathfinder;       //nav
     Transform target;              //Player
-    LivingEntity targetEntitiy;
+    LivingEntity targetEntity;
 
     Material skinMaterial;         //공격할 때 쓸 메테리얼
     public ParticleSystem deathEffect; //사망 파티클
 
     Color originalColor;
 
-    float attackDistance = 1.5f;   //공격할 수 있는 거리
+    float attackDistance = 0.5f;   //공격할 수 있는 거리
 
     float timeBetweenAttacks = 1;  //공격 사이에 타이머
     float nextAttackTime;          //다음 공격 가능 시간
@@ -47,7 +48,7 @@ public class Enemy : LivingEntity
             hasTarget = true;
 
             target = GameObject.FindGameObjectWithTag("Player").transform;
-            targetEntitiy = target.GetComponent<LivingEntity>();
+            targetEntity = target.GetComponent<LivingEntity>();
 
             myCollisionRadius = GetComponent<CapsuleCollider>().radius;
             targetCollisionRadius = target.GetComponent<CapsuleCollider>().radius;
@@ -62,7 +63,7 @@ public class Enemy : LivingEntity
         {
             currentState = State.Chasing;
 
-            targetEntitiy.OnDeath += OnTargetDeath;
+            targetEntity.OnDeath += OnTargetDeath;
             StartCoroutine(UpdatePath());
         }
     }
@@ -97,11 +98,14 @@ public class Enemy : LivingEntity
         pathfinder.speed = moveSpeed;
 
         if(hasTarget)
-            damage = Mathf.Ceil(targetEntitiy.startHealth / hitsToKillPlayer);
+            damage = Mathf.Ceil(targetEntity.startHealth / hitsToKillPlayer);
+
 
         startHealth = enemyHealth;
 
-        skinMaterial = GetComponent<Renderer>().sharedMaterial;
+        deathEffect.startColor = new Color(skinColor.r, skinColor.g, skinColor.b, 1);
+
+        skinMaterial = GetComponent<Renderer>().material;
         skinMaterial.color = skinColor;
         originalColor = skinMaterial.color;
     }
@@ -111,15 +115,22 @@ public class Enemy : LivingEntity
     /// </summary>
     public override void TakeHit(float damage, Vector3 hitPoint, Vector3 hitDirection)
     {
+        print("Hit");
         AudioManager.instance.PlaySound("Impact", transform.position);
-        if(damage >= health)    //죽음
+        if (damage >= health && !dead)
         {
+            if (OnDeathStatic != null)
+                OnDeathStatic();
+
             AudioManager.instance.PlaySound("Enemy Death", transform.position);
-            Destroy(Instantiate(deathEffect.gameObject, hitPoint, Quaternion.FromToRotation(Vector3.left, hitDirection)) as GameObject, deathEffect.startLifetime);
+            Destroy(Instantiate(deathEffect.gameObject, hitPoint, Quaternion.FromToRotation(Vector3.forward, hitDirection)) as GameObject, deathEffect.startLifetime);
         }
         base.TakeHit(damage, hitPoint, hitDirection);
     }
 
+    /// <summary>
+    /// 타겟 사망
+    /// </summary>
     void OnTargetDeath()
     {
         hasTarget = false;
@@ -150,7 +161,7 @@ public class Enemy : LivingEntity
             if(percent >= 0.5f && !hasAppliedDamage)
             {
                 hasAppliedDamage = true;
-                targetEntitiy.TakeDamage(damage);
+                targetEntity.TakeDamage(damage);
             }
 
             percent += Time.deltaTime * attackSpeed;
@@ -172,7 +183,7 @@ public class Enemy : LivingEntity
     /// </summary>
     IEnumerator UpdatePath()
     {
-        float refreshRate = 0.2f;
+        float refreshRate = 0.2f;   //몇초에 한번씩?
 
         while(hasTarget)
         {

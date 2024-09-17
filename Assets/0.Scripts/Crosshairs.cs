@@ -25,13 +25,9 @@ public class Crosshairs : MonoBehaviour
     /// </summary>
     public void DetectTargets(Ray ray)
     {
-        if(Physics.Raycast(ray, 100, targetMask))
-        {
+        if (Physics.Raycast(ray, 100, targetMask))
             dot.color = dotHighlightColor;
-        }
         else
-        {
             dot.color = originalDotColor;
-        }
     }
 }

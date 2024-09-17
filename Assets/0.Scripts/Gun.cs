@@ -11,24 +11,24 @@ public class Gun : MonoBehaviour
         Single  //단발
     };
 
-    public FireMode fireMode;        //상태
+    public FireMode fireMode;          //상태
 
-    public Bullet bullet;               //총알
+    public Bullet bullet;              //총알
     public Transform[] bulletSpawn;    //총구(총알을 생성할 위치)
 
     public float shotTime = 100;      //연사력
     public float bulletSpeed = 35;    //총알 속도
-
     public int burstCount;            //점사가 발사할 총알 개수
+    public int bulletPerMag;          //탄창 최대 크기
+
     int shotsRemainingInBurst;        //더 쏠 총알 개수(점사)
 
     bool triggerReleasedSinceLastShot;//쏠 준비 됨?
-    public int bulletPerMag;    //탄창 최대 크기
     int bulletRemainingInMag;   //현재 탄장에 남아 있는 총알 개수
 
     [Header("장전")]
     bool isReloading;                 //장전 중?
-    public float reloadTime;
+    public float reloadTime;          //장전 시간
 
     Vector3 recoilSmoothDampvelocity;
     float recoilRotSmoothDampVelocity;
@@ -43,9 +43,9 @@ public class Gun : MonoBehaviour
     [Header("반동")]
     public Vector2 kickMinMax = new Vector2(0.05f, 0.2f);
     public Vector2 recoilAngleMinMax = new Vector2(3, 5);
-    float recoilAngle;  //반동 각도
     public float recoilMoveSettleTime = 0.1f;
     public float recoilRotationSettleTime = 0.1f;
+    float recoilAngle;  //반동 각도
 
     [Header("Audio")]
     public AudioClip shootAudio;    //사격
@@ -127,6 +127,9 @@ public class Gun : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 장전 애니메이션
+    /// </summary>
     IEnumerator AnimateReload()
     {
         isReloading = true;
@@ -151,6 +154,9 @@ public class Gun : MonoBehaviour
         bulletRemainingInMag = bulletPerMag;    //장전 시키기.
     }
 
+    /// <summary>
+    /// 조준점 바라봄
+    /// </summary>
     public void Aim(Vector3 aimPoint)
     {
         if(!isReloading)

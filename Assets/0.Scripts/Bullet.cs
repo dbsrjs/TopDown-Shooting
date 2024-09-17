@@ -5,10 +5,8 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    public LayerMask collisionMask;
+    public LayerMask collisionMask; // 총알이 충돌할 수 있는 레이어 마스크
     public Color trailColor;
-
-    float time = 0;
 
     float speed = 10;
     float damage = 1;
@@ -19,8 +17,10 @@ public class Bullet : MonoBehaviour
     {
         Destroy(gameObject, 3f);
 
+        // 총알이 생성된 위치에서 0.1f 반경 내에 충돌할 수 있는 물체가 있는지 확인
         Collider[] initialCollisions = Physics.OverlapSphere(transform.position, 0.1f, collisionMask);
 
+        // 만약 생성 시점에 이미 충돌 물체와 겹쳐 있으면 OnHitObject 호출
         if (initialCollisions.Length > 0)   //총알이 생성 됐을 때 어떤 충돌체 오브젝트와 이미 겹친 상태일 때
             OnHitObject(initialCollisions[0], transform.position);
 
@@ -33,27 +33,35 @@ public class Bullet : MonoBehaviour
     }
     void Update()
     {
-        float moveDistance = speed * Time.deltaTime; 
-        CheckCollisions(moveDistance);
-        transform.Translate(Vector3.right * moveDistance);
+        float moveDistance = speed * Time.deltaTime;       // 이동할 거리를 계산 (속도 * 프레임 시간)
+        CheckCollisions(moveDistance);                     // 이동 경로에서 충돌 체크
+        transform.Translate(Vector3.right * moveDistance); // 총알을 오른쪽으로 이동
     }
 
+    /// <summary>
+    /// 이동 거리 내에 충돌할 물체가 있는지 체크하는 함수
+    /// </summary>
     void CheckCollisions(float moveDistance)
     {
-        Ray ray = new Ray(transform.position, transform.forward);
+        // 총알의 현재 위치에서 앞쪽으로 Raycast를 쏴서 충돌을 감지
+        Ray ray = new Ray(transform.position, transform.right);
         RaycastHit hit;
 
-        if(Physics.Raycast(ray, out hit, moveDistance + what_do_I_call_this_variable, collisionMask, QueryTriggerInteraction.Collide))
+        // Ray가 충돌체를 감지하면 OnHitObject 호출
+        if (Physics.Raycast(ray, out hit, moveDistance + what_do_I_call_this_variable, collisionMask, QueryTriggerInteraction.Collide))
             OnHitObject(hit.collider, hit.point);
     }
 
+    /// <summary>
+    /// 총알이 충돌한 물체에 대한 처리
+    /// </summary>
     void OnHitObject(Collider c, Vector3 hitPoint)
     {
+        // 충돌한 물체가 IDamageable 인터페이스를 구현하고 있다면 데미지를 가함
         IDamageable damageableObject = c.GetComponent<IDamageable>();
         if (damageableObject != null)
-        {
-            damageableObject.TakeHit(damage, hitPoint, transform.forward);
-        }
+            damageableObject.TakeHit(damage, hitPoint, transform.right);
+
         Destroy(gameObject);
     }
 }
