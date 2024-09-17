@@ -508,7 +508,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2144350857}
         m_TargetAssemblyTypeName: Menu, Assembly-CSharp
-        m_MethodName: OptionMenu
+        m_MethodName: OptionsMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1041,7 +1041,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2144350857}
         m_TargetAssemblyTypeName: Menu, Assembly-CSharp
-        m_MethodName: SetScrrenResolution
+        m_MethodName: SetScreenResolution
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2584,7 +2584,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2144350857}
         m_TargetAssemblyTypeName: Menu, Assembly-CSharp
-        m_MethodName: SetScrrenResolution
+        m_MethodName: SetScreenResolution
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2900,7 +2900,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2144350857}
         m_TargetAssemblyTypeName: Menu, Assembly-CSharp
-        m_MethodName: SetScrrenResolution
+        m_MethodName: SetScreenResolution
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2910,7 +2910,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  m_IsOn: 0
+  m_IsOn: 1
 --- !u!1 &1679837039
 GameObject:
   m_ObjectHideFlags: 0
@@ -3761,7 +3761,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1910060680}
   - component: {fileID: 1910060679}
-  - component: {fileID: 1910060678}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3769,14 +3768,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &1910060678
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1910060677}
-  m_Enabled: 1
 --- !u!20 &1910060679
 Camera:
   m_ObjectHideFlags: 0
@@ -4428,8 +4419,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95069cc5c4d38864d85eba640d5f5731, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMenu: {fileID: 920766366}
-  optionMenu: {fileID: 2044478822}
+  mainMenuHolder: {fileID: 920766366}
+  optionsMenuHolder: {fileID: 2044478822}
   volumeSliders:
   - {fileID: 1453991873}
   - {fileID: 831481104}
