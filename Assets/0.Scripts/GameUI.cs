@@ -34,7 +34,11 @@ public class GameUI : MonoBehaviour
 
     private void Update()
     {
-        scoreText.text = ScoreKeeper.score.ToString("D6");
+        if(ScoreKeeper.score < 999999)
+            scoreText.text = ScoreKeeper.score.ToString("D6");
+        else
+            scoreText.text = ScoreKeeper.score.ToString();
+
         float healthPercent = 0;
         if(player != null)
             healthPercent = player.health / player.startHealth;
