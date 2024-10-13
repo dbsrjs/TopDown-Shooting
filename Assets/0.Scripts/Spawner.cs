@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
+    public static Spawner Instance;
+
     [SerializeField] private bool devMode;  //Dev mode
     LivingEntity playerEntity;
     Transform playerT;
@@ -12,10 +14,10 @@ public class Spawner : MonoBehaviour
     public Enemy enemy;             //적 프리팹
 
     Wave currentWave;               //현재 웨이브 데이터
-    int currentWaveNumber;          //현재 웨이브 번호
+    [HideInInspector] public int currentWaveNumber;          //현재 웨이브 번호
 
     int enemiesRemainingToSpawn;    //남아있는 스폰해야할 적
-    int enemiesRemaningAlive;       //살아 있는 적의 수
+    [HideInInspector] public int enemiesRemaningAlive;       //살아 있는 적의 수
     float nextSpawnTime;
 
     MapGenerator map;               //맵 생성기 참조
@@ -29,6 +31,11 @@ public class Spawner : MonoBehaviour
     bool isDisabled;                     //플레이어가 죽었을 때 플레이어 관련 기능들을 비활성활 시켜줌.
 
     public event System.Action<int> OnNewWave;  //새로운 웨이브 시작 시 호출되는 이벤트
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {

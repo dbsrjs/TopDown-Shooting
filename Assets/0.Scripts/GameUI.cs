@@ -14,6 +14,7 @@ public class GameUI : MonoBehaviour
     public Text newWaveTitle;           //베너에 뜨는 현재 웨이브
     public Text newWaveEnemyCount;      //현재 웨이브에서 스폰되는 적 수
     public Text scoreText;              //점수
+    public Text enemyCountText;         //점수
     public Text gameoverScoreText;      //게임 오버 점수
     public RectTransform healthBar;     //HP  Bar
 
@@ -44,6 +45,8 @@ public class GameUI : MonoBehaviour
             healthPercent = player.health / player.startHealth;
 
         healthBar.localScale = new Vector3(healthPercent, 1, 1);
+
+        EnemyCount();
     }
 
     /// <summary>
@@ -136,5 +139,19 @@ public class GameUI : MonoBehaviour
     public void ReturnToMenu()
     {
         SceneManager.LoadScene("Menu");
+    }
+
+    /// <summary>
+    /// 남은 적 표시.
+    /// </summary>
+    public void EnemyCount()
+    {
+        if(Spawner.Instance.currentWaveNumber == 5)
+        {
+            enemyCountText.text = $"Enemies: ∞";
+            return;
+        }
+        
+        enemyCountText.text = $"Enemies: {Spawner.Instance.enemiesRemaningAlive}";
     }
 }
