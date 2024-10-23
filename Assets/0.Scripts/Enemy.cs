@@ -22,7 +22,7 @@ public class Enemy : LivingEntity
     Transform target;              //Player
     LivingEntity targetEntity;
 
-    Material skinMaterial;         //공격할 때 쓸 메테리얼
+    Material skinMaterial;             //공격할 때 쓸 메테리얼
     public ParticleSystem deathEffect; //사망 파티클
 
     Color originalColor;
@@ -88,11 +88,11 @@ public class Enemy : LivingEntity
 
     /// <summary>
     /// 적 특징 정보 정의
-    /// moveSpeed : 이동 속도
-    /// hitsToKillPlayer : 플레이어 HP / hitsToKillPlayer
-    /// enemyHealth : 적(자신) HP
-    /// skinColor : 색갈
     /// </summary>
+    /// <param name="moveSpeed">이동 속도</param>
+    /// <param name="hitsToKillPlayer">플레이어 HP / hitsToKillPlayer</param>
+    /// <param name="enemyHealth">적(자신) HP</param>
+    /// <param name="skinColor">색갈</param>
     public void SetCharacteristics(float moveSpeed, int hitsToKillPlayer, float enemyHealth, Color skinColor)
     {
         pathfinder.speed = moveSpeed;

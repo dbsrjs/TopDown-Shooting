@@ -31,6 +31,7 @@ public class Bullet : MonoBehaviour
     {
         speed = _speed;
     }
+
     void Update()
     {
         float moveDistance = speed * Time.deltaTime;       // 이동할 거리를 계산 (속도 * 프레임 시간)
