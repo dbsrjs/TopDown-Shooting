@@ -13,7 +13,7 @@ public class Spawner : MonoBehaviour
     public Wave[] waves;
     public Enemy enemy;             //적 프리팹
 
-    Wave currentWave;               //현재 웨이브 데이터
+    Wave currentWave;                                        //현재 웨이브 데이터
     [HideInInspector] public int currentWaveNumber;          //현재 웨이브 번호
 
     int enemiesRemainingToSpawn;    //남아있는 스폰해야할 적
@@ -23,10 +23,10 @@ public class Spawner : MonoBehaviour
     MapGenerator map;               //맵 생성기 참조
 
     float timeBetweenCampingChecks = 2;  //얼마나 자주 존버를 체크할 것인가.
-    float campThresholdDistance = 1.5f;  //존버로 간주되지 않으려면 이동해야 할 최소 거리
+    float campThresholdDistance = 1.5f;  //존버로 간주되지 않으려면 이동해야 할 최소 거리    
     float nextCampCheckTime;             //다음 존버를 체크하는 시간. 
     Vector3 campPositionOld;             //마지막 존버 체크 시 플레이어 위치
-    bool isCamping;                      //존버 여부     true : 존버중
+    bool isCamping;                      //존버 여부     true: 존버중
 
     bool isDisabled;                     //플레이어가 죽었을 때 플레이어 관련 기능들을 비활성활 시켜줌.
 
@@ -148,18 +148,27 @@ public class Spawner : MonoBehaviour
     }
 
     /// <summary>
+    /// 최종 웨이브(난이도 어려워짐)
+    /// </summary>
+    void InfiniteWave()
+    {
+        timeBetweenCampingChecks = 1f;  //얼마나 자주 존버를 체크할 것인가.  (기존 값: 2f)
+        campThresholdDistance = 2f;   //존버로 간주되지 않으려면 이동해야 할 최소 거리  (기존 값: 1.5f)
+    }
+
+    /// <summary>
     /// 다음 웨이브로 이동하는 메서드
     /// </summary>
     void NextWave()
     {
-        if (currentWaveNumber > 0)  // 웨이브 완료 사운드 재생
+        if (currentWaveNumber > 0)  //남은 적이 없다면 웨이브 완료 사운드 재생
             AudioManager.instance.PlaySound2D("Level Complete");
 
         currentWaveNumber++;     // 웨이브 번호 증가
 
         if (currentWaveNumber - 1 < waves.Length)   //다음 웨이브가 있다면..?
         {
-            currentWave = waves[currentWaveNumber - 1]; // 현재 웨이브 데이터를 갱신
+            currentWave = waves[currentWaveNumber - 1];         // 현재 웨이브 데이터를 갱신
 
             enemiesRemainingToSpawn = currentWave.enemyCount;   // 이번 웨이브에서 스폰할 적 수
             enemiesRemaningAlive = enemiesRemainingToSpawn;     // 이번 웨이브에서 남은 적 수
@@ -167,11 +176,15 @@ public class Spawner : MonoBehaviour
             if (OnNewWave != null)  // 새로운 웨이브 이벤트 호출
                 OnNewWave(currentWaveNumber);
 
+            if(currentWave.infinite == true)
+                InfiniteWave();
+
             ResetPlayerPosition();
         }
     }
+    
 
-    [System.Serializable]   //Inspector
+    [System.Serializable]   //Inspector 창에 노출 시켜줌
     public class Wave
     {
         public bool infinite;           //현재 웨이브가 무한한가?
