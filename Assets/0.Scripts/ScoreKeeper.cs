@@ -30,8 +30,8 @@ public class ScoreKeeper : MonoBehaviour
 
         lastEnemyKillTime = Time.time;
 
-        // 점수 계산: 기본 점수(5)에 스트릭 보너스를 추가 (2의 스트릭 카운트 제곱을 더함)
-        score += 5 + (long)Mathf.Pow(1.7f, streakCount);
+        // 점수 계산: 기본 점수(4)에 스트릭 보너스를 추가 (1.7의 스트릭 카운트 제곱을 더함)
+        score += 4 + (long)Mathf.Pow(1.7f, streakCount);
     }
 
     void OnPlayerDeath()

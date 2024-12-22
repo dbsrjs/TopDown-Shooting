@@ -56,7 +56,8 @@ public class Player : LivingEntity
             crosshairs.transform.position = point;
             crosshairs.DetectTargets(ray);
 
-            if((new Vector2(point.x, point.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude > 1)  //조준점이 총에 너무 가까이가면 총이 회전하기 때문에 일정 거리 이상일 때만 작동하도록 함.
+            //조준점이 총에 너무 가까이가면 총이 회전하기 때문에 일정 거리 이상일 때만 작동하도록 함.
+            if ((new Vector2(point.x, point.z) - new Vector2(transform.position.x, transform.position.z)).sqrMagnitude > 1)
                 gunController.Aim(point);
         }
 

@@ -10862,10 +10862,10 @@ MonoBehaviour:
     skinColor: {r: 0.75504416, g: 0.13725491, b: 0.8784314, a: 0}
   - infinite: 1
     enemyCount: -1
-    timeBetweenSpawns: 0.45
-    moveSpeed: 4
+    timeBetweenSpawns: 0.3
+    moveSpeed: 4.5
     hitsToKillPlayer: 1
-    enemyHealth: 1
+    enemyHealth: 2
     skinColor: {r: 0, g: 0, b: 0, a: 0}
   enemy: {fileID: 7769415000039342312, guid: eb39a1197aa095a44ac81e5ca1d51155, type: 3}
   currentWaveNumber: 0

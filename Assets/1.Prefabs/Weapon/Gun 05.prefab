@@ -868,10 +868,10 @@ MonoBehaviour:
   - {fileID: 483700}
   - {fileID: 436822}
   - {fileID: 449122}
-  shotTime: 90
-  bulletSpeed: 62
+  shotTime: 95
+  bulletSpeed: 60
   burstCount: -1
-  bulletPerMag: 24
+  bulletPerMag: 20
   reloadTime: 0.3
   shell: {fileID: 2169018074690752084, guid: 91a5a47869c902240b6bf19a9077e27f, type: 3}
   shellEjection: {fileID: 475286}

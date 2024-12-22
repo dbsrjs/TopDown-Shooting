@@ -98,7 +98,6 @@ public class GameUI : MonoBehaviour
     /// <summary>
     /// 죽었을 때 Fade 올리기
     /// </summary>
-    /// <returns></returns>
     IEnumerator Fade(Color from, Color to, float time)
     {
         float speed = 1 / time;
@@ -142,7 +141,7 @@ public class GameUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 남은 적 표시.
+    /// 남은 적 표시
     /// </summary>
     public void EnemyCount()
     {
