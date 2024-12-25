@@ -15,6 +15,7 @@ public class Bullet : MonoBehaviour
 
     private void Start()
     {
+        Accuracy.Instance.IncrementShots();
         Destroy(gameObject, 3f);
 
         // 총알이 생성된 위치에서 0.1f 반경 내에 충돌할 수 있는 물체가 있는지 확인
@@ -61,8 +62,11 @@ public class Bullet : MonoBehaviour
         // 충돌한 물체가 IDamageable 인터페이스를 구현하고 있다면 데미지를 가함
         IDamageable damageableObject = c.GetComponent<IDamageable>();
         if (damageableObject != null)
+        {
             damageableObject.TakeHit(damage, hitPoint, transform.right);
-
+            Accuracy.Instance.IncrementHits();
+        }
+        
         Destroy(gameObject);
     }
 }

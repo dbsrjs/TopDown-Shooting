@@ -27,8 +27,10 @@ public class GunController : MonoBehaviour
     /// </summary>
     public void OnTriggerHold()
     {
-        if(equippedGun != null)
+        if (equippedGun != null)
+        { 
             equippedGun.OnTriggerHold();
+        }
     }
 
     /// <summary>
