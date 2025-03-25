@@ -6,35 +6,11 @@ public class Accuracy : MonoBehaviour
 {
     public static Accuracy Instance;
 
-    private int hits = 0;     //¸íÁß È½¼ö
-    private int shots = 0;    //¹ß»ç È½¼ö
+    private int hits { get; set; } = 0;     //¸íÁß È½¼ö
+    private int shots { get; set; } = 0;    //¹ß»ç È½¼ö
 
-    private float accuracy = 0;
+    public float accuracy { get; set; } = 0;
 
-    public int GetHits()
-    {
-        return hits;
-    }
-
-    public void SetHits(int _hits)
-    {
-        hits = _hits;
-    }
-
-    public int GetShots()
-    {
-        return shots;
-    }
-
-    public void SetShots(int _shots)
-    {
-        shots = _shots;
-    }
-
-    public float GetAccuracy()
-    {
-        return accuracy;
-    }
 
     void Awake()
     {

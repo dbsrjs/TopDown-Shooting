@@ -1,6 +1,5 @@
 using JetBrains.Annotations;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -10,14 +9,14 @@ public class GameUI : MonoBehaviour
     public Image fadePlane;
     public GameObject GameOverUI;
 
-    public RectTransform newWaveBanner; //새로운 웨이브가 시작 할 때 뜨는 베너
-    public Text newWaveTitle;           //베너에 뜨는 현재 웨이브
-    public Text newWaveEnemyCount;      //현재 웨이브에서 스폰되는 적 수
-    public Text scoreText;              //점수
-    public Text enemyCountText;         //남은 적 수
-    public Text accuracyText;           //명줄률
-    public Text gameoverScoreText;      //게임 오버 점수
-    public RectTransform healthBar;     //HP  Bar
+    public RectTransform newWaveBanner;  //새로운 웨이브가 시작 할 때 뜨는 베너
+    public Text newWaveTitle;            //베너에 뜨는 현재 웨이브
+    public Text newWaveEnemyCount;       //현재 웨이브에서 스폰되는 적 수
+    public Text scoreText;               //점수
+    public Text enemyCountText;          //남은 적 수
+    public Text accuracyText;            //명줄률
+    public Text gameoverScoreText;       //게임 오버 점수
+    public RectTransform healthBar;      //HP  Bar
 
     Spawner spawner;
     Player player;
@@ -161,6 +160,6 @@ public class GameUI : MonoBehaviour
     /// </summary>
     public void AccuracyCount()
     {
-        accuracyText.text = $"Accuracy: {Mathf.RoundToInt(Accuracy.Instance.GetAccuracy())}%";
+        accuracyText.text = $"Accuracy: {Mathf.RoundToInt(Accuracy.Instance.accuracy)}%";
     }
 }

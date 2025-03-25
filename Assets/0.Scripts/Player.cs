@@ -61,13 +61,13 @@ public class Player : LivingEntity
                 gunController.Aim(point);
         }
 
+        //낙사
         if(transform.position.y < -7)
         {
             TakeDamage(health);
         }
 
         #region 무기 조작
-        
         //방아쇠를 당김
         if (Input.GetMouseButton(0))
             gunController.OnTriggerHold();

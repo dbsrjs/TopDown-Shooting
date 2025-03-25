@@ -10,19 +10,19 @@ public class MapGenerator : MonoBehaviour
 
     public Transform tilePrefab;        //타일
     public Transform obstaclePrefab;    //장애물
-    public Transform mapFloor ; 
-    public Transform navmeshFloor; 
+    public Transform mapFloor;
+    public Transform navmeshFloor;
     public Transform navmeshMaskPrefab; //나브메쉬
 
-    public Vector2 maxMapSize;  //최대 맵 크기
+    public Vector2 maxMapSize;          //최대 맵 크기
 
-    [Range(0f, 1f)] //범위를 0 ~ 1로 지정
-    public float outlinePercent;    //테두리 퍼센트
+    [Range(0f, 1f)]                     //범위를 0 ~ 1로 지정
+    public float outlinePercent;        //테두리 퍼센트
 
-    public float tileSize;          //타일 크기
+    public float tileSize;              //타일 크기
 
-    List<Coord> alltileCoords;      //타일 좌표에 대한 list
-    Queue<Coord> shuffledTileCords; //셔플 완료된 타일들.
+    List<Coord> alltileCoords;          //타일 좌표에 대한 list
+    Queue<Coord> shuffledTileCords;     //셔플 완료된 타일들.
     Queue<Coord> shuffledOpenTileCords; //셔플 완료된 타일들.
     Transform[,] tileMap;
 

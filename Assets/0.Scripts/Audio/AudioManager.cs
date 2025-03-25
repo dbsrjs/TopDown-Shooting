@@ -74,11 +74,11 @@ public class AudioManager : MonoBehaviour
                 break;
             case AudioChannel.Music:
                 musicVolumePercent = volumePercent;
+
+                musicSources[0].volume = musicVolumePercent * masterVolumePercent;
+                musicSources[1].volume = musicVolumePercent * masterVolumePercent;
                 break;
         }
-
-        musicSources[0].volume = musicVolumePercent * masterVolumePercent;
-        musicSources[1].volume = musicVolumePercent * masterVolumePercent;
 
         PlayerPrefs.SetFloat("master vol", masterVolumePercent);
         PlayerPrefs.SetFloat("sfx vol", sfxVolumePercent);

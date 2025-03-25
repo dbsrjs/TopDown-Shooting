@@ -343,6 +343,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: '[ Audio Manager ]'
       objectReference: {fileID: 0}
+    - target: {fileID: 7995702398773660082, guid: 74ffa6de8ce5e3f4f81416b86390c596, type: 3}
+      propertyPath: soundGroups.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7995702398773660082, guid: 74ffa6de8ce5e3f4f81416b86390c596, type: 3}
+      propertyPath: soundGroups.Array.data[5].groupID
+      value: Player Death
+      objectReference: {fileID: 0}
+    - target: {fileID: 7995702398773660082, guid: 74ffa6de8ce5e3f4f81416b86390c596, type: 3}
+      propertyPath: soundGroups.Array.data[5].group.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7995702398773660082, guid: 74ffa6de8ce5e3f4f81416b86390c596, type: 3}
+      propertyPath: soundGroups.Array.data[5].group.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 9338cf7361d603e4da4191d9cbf7fbdd, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

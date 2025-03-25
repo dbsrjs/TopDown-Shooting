@@ -115,7 +115,6 @@ public class Enemy : LivingEntity
     /// </summary>
     public override void TakeHit(float damage, Vector3 hitPoint, Vector3 hitDirection)
     {
-        print("Hit");
         AudioManager.instance.PlaySound("Impact", transform.position);
         if (damage >= health && !dead)
         {
