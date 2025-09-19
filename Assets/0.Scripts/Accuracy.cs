@@ -6,11 +6,12 @@ public class Accuracy : MonoBehaviour
 {
     public static Accuracy Instance;
 
-    private int hits { get; set; } = 0;     //¸íÁß È½¼ö
-    private int shots { get; set; } = 0;    //¹ß»ç È½¼ö
+    private int hits { get; set; } = 0;           //ëª…ì¤‘ íšŸìˆ˜
+    private int shots { get; set; } = 0;          //ë°œì‚¬ íšŸìˆ˜
+    private int criticalHits { get; set; } = 0;   //ì¹˜ëª…íƒ€ ëª…ì¤‘ íšŸìˆ˜
 
     public float accuracy { get; set; } = 0;
-
+    public float criticalAccuracy { get; set; } = 0;
 
     void Awake()
     {
@@ -19,9 +20,9 @@ public class Accuracy : MonoBehaviour
             Instance = this;
         }
     }
-    
+
     /// <summary>
-    /// ¹ß»ç·ü Á¶Àı
+    /// ë°œì‚¬ìˆ˜ ì¦ê°€
     /// </summary>
     public void IncrementShots()
     {
@@ -30,7 +31,7 @@ public class Accuracy : MonoBehaviour
     }
 
     /// <summary>
-    /// ¸íÁß·ü Á¶Àı
+    /// ëª…ì¤‘ë¥  ì¦ê°€
     /// </summary>
     public void IncrementHits()
     {
@@ -39,13 +40,28 @@ public class Accuracy : MonoBehaviour
     }
 
     /// <summary>
-    /// ¸íÁß·ü °è»ê
+    /// ì¹˜ëª…íƒ€ ëª…ì¤‘ ì¦ê°€
+    /// </summary>
+    public void IncrementCriticalHits()
+    {
+        criticalHits++;
+        UpdateAccuracy();
+    }
+
+    /// <summary>
+    /// ëª…ì¤‘ë¥  ê³„ì‚°
     /// </summary>
     public void UpdateAccuracy()
     {
         if (shots == 0)
+        {
             accuracy = 0;
+            criticalAccuracy = 0;
+        }
         else
+        {
             accuracy = (float)hits / shots * 100f;
+            criticalAccuracy = (float)criticalHits / shots * 100f;
+        }
     }
 }

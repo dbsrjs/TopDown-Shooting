@@ -78,4 +78,12 @@ public class GunController : MonoBehaviour
             return weaponHold.position.y;
         }
     }
+
+    public Gun EquippedGun
+    {
+        get
+        {
+            return equippedGun;
+        }
+    }
 }

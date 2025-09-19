@@ -15,11 +15,14 @@ public class GameUI : MonoBehaviour
     public Text scoreText;               //점수
     public Text enemyCountText;          //남은 적 수
     public Text accuracyText;            //정확도
+    public Text ammoText;                //탄약 정보
+    public Text criticalAccuracyText;    //치명타 명중률
     public Text gameoverScoreText;       //게임 종료 점수
     public RectTransform healthBar;      //HP  Bar
 
     Spawner spawner;
     Player player;
+    GunController gunController;
 
     private void Awake()
     {
@@ -31,6 +34,7 @@ public class GameUI : MonoBehaviour
     {
         player = FindObjectOfType<Player>();
         player.OnDeath += OnGameOver;
+        gunController = FindObjectOfType<GunController>();
     }
 
     private void Update()
@@ -48,6 +52,8 @@ public class GameUI : MonoBehaviour
 
         EnemyCount();
         AccuracyCount();
+        CriticalAccuracyCount();
+        AmmoCount();
     }
 
     /// <summary>
@@ -193,5 +199,28 @@ public class GameUI : MonoBehaviour
     public void AccuracyCount()
     {
         accuracyText.text = $"Accuracy: {Mathf.RoundToInt(Accuracy.Instance.accuracy)}%";
+    }
+
+    /// <summary>
+    /// 치명타 명중률 표시
+    /// </summary>
+    public void CriticalAccuracyCount()
+    {
+        if (criticalAccuracyText != null)
+        {
+            criticalAccuracyText.text = $"Critical: {Mathf.RoundToInt(Accuracy.Instance.criticalAccuracy)}%";
+        }
+    }
+
+    /// <summary>
+    /// 탄약 정보 표시
+    /// </summary>
+    public void AmmoCount()
+    {
+        if (ammoText != null && gunController != null && gunController.EquippedGun != null)
+        {
+            Gun gun = gunController.EquippedGun;
+            ammoText.text = $"Ammo: {gun.bulletRemainingInMag}/{gun.bulletPerMag}";
+        }
     }
 }

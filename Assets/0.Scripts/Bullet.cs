@@ -83,6 +83,12 @@ public class Bullet : MonoBehaviour
 
             damageableObject.TakeHit(finalDamage, hitPoint, transform.right, isCriticalHit);
             Accuracy.Instance.IncrementHits();
+
+            // 치명타였다면 치명타 명중도 증가
+            if (isCriticalHit)
+            {
+                Accuracy.Instance.IncrementCriticalHits();
+            }
         }
 
         Destroy(gameObject);

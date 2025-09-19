@@ -24,7 +24,7 @@ public class Gun : MonoBehaviour
     int shotsRemainingInBurst;        //한 번에 쏠 탄약 개수(연사)
 
     bool triggerReleasedSinceLastShot;//총 쏠 준비 됨?
-    int bulletRemainingInMag;   //현재 탄창에 남아 있는 총알 개수
+    public int bulletRemainingInMag;   //현재 탄창에 남아 있는 총알 개수
 
     [Header("재장전")]
     bool isReloading;                 //재장전 중?
