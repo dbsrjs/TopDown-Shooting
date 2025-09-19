@@ -9,13 +9,13 @@ public class GameUI : MonoBehaviour
     public Image fadePlane;
     public GameObject GameOverUI;
 
-    public RectTransform newWaveBanner;  //»õ·Î¿î ¿şÀÌºê°¡ ½ÃÀÛ ÇÒ ¶§ ¶ß´Â º£³Ê
-    public Text newWaveTitle;            //º£³Ê¿¡ ¶ß´Â ÇöÀç ¿şÀÌºê
-    public Text newWaveEnemyCount;       //ÇöÀç ¿şÀÌºê¿¡¼­ ½ºÆùµÇ´Â Àû ¼ö
-    public Text scoreText;               //Á¡¼ö
-    public Text enemyCountText;          //³²Àº Àû ¼ö
-    public Text accuracyText;            //¸íÁÙ·ü
-    public Text gameoverScoreText;       //°ÔÀÓ ¿À¹ö Á¡¼ö
+    public RectTransform newWaveBanner;  //ìƒˆë¡œìš´ ì›¨ì´ë¸Œê°€ ì‹œì‘ ë  ë•Œ ì˜¬ë¼ì˜¤ëŠ” ë°°ë„ˆ
+    public Text newWaveTitle;            //ë°°ë„ˆì— ì˜¬ë¼ì˜¬ ìƒˆë¡œìš´ ì›¨ì´ë¸Œ
+    public Text newWaveEnemyCount;       //í˜„ì¬ ì›¨ì´ë¸Œì—ì„œ ìƒì„±ë˜ëŠ” ì  ìˆ˜
+    public Text scoreText;               //ì ìˆ˜
+    public Text enemyCountText;          //ë‚¨ì€ ì  ìˆ˜
+    public Text accuracyText;            //ì •í™•ë„
+    public Text gameoverScoreText;       //ê²Œì„ ì¢…ë£Œ ì ìˆ˜
     public RectTransform healthBar;      //HP  Bar
 
     Spawner spawner;
@@ -51,25 +51,54 @@ public class GameUI : MonoBehaviour
     }
 
     /// <summary>
-    /// º£³Ê Á¤º¸
+    /// ì›¨ì´ë¸Œ ì‹œì‘
     /// </summary>
     void OnNewWave(int waveNumber)
     {
-        //ÇöÀç ¿şÀÌºê
-        string[] numbers = { "One", "Two", "Tree", "Four", "Five" };
-        newWaveTitle.text = $"- Wave {numbers[waveNumber - 1]} -";
+        // ëœë¤ ëª¨ë“œì¸ì§€ í™•ì¸
+        bool isRandomMode = GameSettings.Instance != null && GameSettings.Instance.IsRandomMapMode();
 
-        //½ºÆùÇÒ Àû ¼ö
-        string enemyCountString = ((spawner.waves[waveNumber - 1].infinite) ? "Infinite" : spawner.waves[waveNumber - 1].enemyCount + "");
+        //ì›¨ì´ë¸Œ íƒ€ì´í‹€
+        if (isRandomMode)
+        {
+            // ëœë¤ ëª¨ë“œì—ì„œëŠ” ìˆ«ìë¡œ í‘œì‹œ
+            newWaveTitle.text = $"- Wave {waveNumber} -";
+        }
+        else
+        {
+            // ì¼ë°˜ ëª¨ë“œì—ì„œëŠ” ê¸°ì¡´ ë°©ì‹ ì‚¬ìš©
+            string[] numbers = { "One", "Two", "Three", "Four", "Five" };
+            if (waveNumber <= numbers.Length)
+                newWaveTitle.text = $"- Wave {numbers[waveNumber - 1]} -";
+            else
+                newWaveTitle.text = $"- Wave {waveNumber} -";
+        }
+
+        //ìƒì„±ë  ì  ìˆ˜
+        string enemyCountString;
+        if (isRandomMode)
+        {
+            // ëœë¤ ëª¨ë“œì—ì„œëŠ” í˜„ì¬ ì›¨ì´ë¸Œì˜ ì  ìˆ˜ í‘œì‹œ
+            enemyCountString = spawner.enemiesRemaningAlive.ToString();
+        }
+        else
+        {
+            // ì¼ë°˜ ëª¨ë“œì—ì„œëŠ” ê¸°ì¡´ ë°©ì‹ ì‚¬ìš©
+            if (waveNumber <= spawner.waves.Length)
+                enemyCountString = ((spawner.waves[waveNumber - 1].infinite) ? "Infinite" : spawner.waves[waveNumber - 1].enemyCount + "");
+            else
+                enemyCountString = "Infinite";
+        }
+
         newWaveEnemyCount.text = $"Enemies: {enemyCountString}";
 
-        //¾Ö´Ï¸ŞÀÌ¼Ç
+        //ì• ë‹ˆë©”ì´ì…˜
         StopCoroutine("AnimateNewWaveBanner");
         StartCoroutine("AnimateNewWaveBanner");
     }
 
     /// <summary>
-    /// º£³Ê ¾Ö´Ï¸ŞÀÌ¼Ç
+    /// ë°°ë„ˆ ì• ë‹ˆë©”ì´ì…˜
     /// </summary>
     IEnumerator AnimateNewWaveBanner()
     {
@@ -97,7 +126,7 @@ public class GameUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Á×¾úÀ» ¶§ Fade ¿Ã¸®±â
+    /// ì£½ì—ˆì„ ë•Œ Fade íš¨ê³¼
     /// </summary>
     IEnumerator Fade(Color from, Color to, float time)
     {
@@ -113,7 +142,7 @@ public class GameUI : MonoBehaviour
     }
 
     /// <summary>
-    /// °ÔÀÓ Á¾·á
+    /// ê²Œì„ ì¢…ë£Œ
     /// </summary>
     void OnGameOver()
     {
@@ -126,7 +155,7 @@ public class GameUI : MonoBehaviour
     }
 
     /// <summary>
-    /// °ÔÀÓ Àç½ÃÀÛ
+    /// ê²Œì„ ì¬ì‹œì‘
     /// </summary>
     public void StartNewGame()
     {
@@ -134,7 +163,7 @@ public class GameUI : MonoBehaviour
     }
 
     /// <summary>
-    /// ¸Ş´º·Î µ¹¾Æ°¡±â
+    /// ë©”ë‰´ë¡œ ëŒì•„ê°€ê¸°
     /// </summary>
     public void ReturnToMenu()
     {
@@ -142,13 +171,16 @@ public class GameUI : MonoBehaviour
     }
 
     /// <summary>
-    /// ³²Àº Àû Ç¥½Ã
+    /// ë‚¨ì€ ì  í‘œì‹œ
     /// </summary>
     public void EnemyCount()
     {
-        if (Spawner.Instance.currentWaveNumber == 5)
+        // ëœë¤ ëª¨ë“œì—ì„œëŠ” ë¬´í•œ ì›¨ì´ë¸Œ í‘œì‹œ ì•ˆí•¨
+        bool isRandomMode = GameSettings.Instance != null && GameSettings.Instance.IsRandomMapMode();
+
+        if (!isRandomMode && Spawner.Instance.currentWaveNumber == 5)
         {
-            enemyCountText.text = $"Enemies: ¡Ä";
+            enemyCountText.text = $"Enemies: âˆ";
             return;
         }
 
@@ -156,7 +188,7 @@ public class GameUI : MonoBehaviour
     }
 
     /// <summary>
-    /// ¸íÁß·ü Ç¥½Ã
+    /// ì •í™•ë„ í‘œì‹œ
     /// </summary>
     public void AccuracyCount()
     {

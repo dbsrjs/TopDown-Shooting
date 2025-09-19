@@ -6,14 +6,15 @@ using UnityEngine.UI;
 public class Menu : MonoBehaviour
 {
 
-    public GameObject mainMenuHolder;       //¸ŞÀÎ ¸Ş´º ¿ÀºêÁ§Æ®
-    public GameObject optionsMenuHolder;    //¿É¼Ç ¸Ş´º ¿ÀºêÁ§Æ®
+    public GameObject mainMenuHolder;       //ë©”ì¸ ë©”ë‰´ ì˜¤ë¸Œì íŠ¸
+    public GameObject optionsMenuHolder;    //ì˜µì…˜ ë©”ë‰´ ì˜¤ë¸Œì íŠ¸
+    public GameObject playMenuHolder;       //í”Œë ˆì´ ë©”ë‰´ ì˜¤ë¸Œì íŠ¸
 
-    public Slider[] volumeSliders;           //º¼·ı ½½¶óÀÌ´õ
-    public Toggle[] resolutionToggles;       //ÇØ»óµµ Åä±Û
-    public Toggle fullscreenToggle;          //ÀüÃ¼ È­¸é Åä±Û
-    public int[] screenWidths;               //ÇØ»óµµ
-    int activeScreenResIndex;                //»ç¿ë ÇØ»óµµ ÀÎµ¦½º
+    public Slider[] volumeSliders;           //ë³¼ë¥¨ ìŠ¬ë¼ì´ë”
+    public Toggle[] resolutionToggles;       //í•´ìƒë„ í† ê¸€
+    public Toggle fullscreenToggle;          //ì „ì²´ í™”ë©´ í† ê¸€
+    public int[] screenWidths;               //í•´ìƒë„
+    int activeScreenResIndex;                //í™œì„± í•´ìƒë„ ì¸ë±ìŠ¤
 
     void Start()
     {
@@ -41,57 +42,101 @@ public class Menu : MonoBehaviour
     }
 
     /// <summary>
-    /// °ÔÀÓ ½ÃÀÛ
+    /// ì¼ë°˜ ê²Œì„ ì‹œì‘
     /// </summary>
     public void Play()
     {
+        // GameSettings ì¸ìŠ¤í„´ìŠ¤ê°€ ì—†ìœ¼ë©´ ìƒì„±
+        EnsureGameSettings();
+
+        // ì¼ë°˜ ëª¨ë“œë¡œ ì„¤ì •
+        GameSettings.Instance.SetRandomMapMode(false);
+
         SceneManager.LoadScene("Game");
     }
 
     /// <summary>
-    /// °ÔÀÓ Á¾·á
+    /// ëœë¤ ë§µìœ¼ë¡œ ê²Œì„ ì‹œì‘
+    /// </summary>
+    public void PlayRandomMode()
+    {
+        // GameSettings ì¸ìŠ¤í„´ìŠ¤ê°€ ì—†ìœ¼ë©´ ìƒì„±
+        EnsureGameSettings();
+
+        // ëœë¤ ëª¨ë“œë¡œ ì„¤ì •
+        GameSettings.Instance.SetRandomMapMode(true);
+
+        SceneManager.LoadScene("Game");
+    }
+
+    /// <summary>
+    /// GameSettings ì¸ìŠ¤í„´ìŠ¤ í™•ì¸ ë° ìƒì„±
+    /// </summary>
+    private void EnsureGameSettings()
+    {
+        if (GameSettings.Instance == null)
+        {
+            GameObject gameSettingsObject = new GameObject("GameSettings");
+            gameSettingsObject.AddComponent<GameSettings>();
+        }
+    }
+
+    /// <summary>
+    /// ê²Œì„ ì¢…ë£Œ
     /// </summary>
     public void Quit()
     {
 #if UNITY_EDITOR
-        // ÀÌ ÄÚµå´Â Unity ¿¡µğÅÍ¿¡¼­¸¸ ½ÇÇàµÊ
-        UnityEditor.EditorApplication.isPlaying = false;    //ºôµå Àü °ÔÀÓ Á¾·á
+        // ì´ ì½”ë“œëŠ” Unity ì—ë””í„°ì—ì„œë§Œ ì‹¤í–‰ë¨
+        UnityEditor.EditorApplication.isPlaying = false;    //ê²Œì„ ì¤‘ì§€ ê¸°ëŠ¥ í™œì„±í™”
 #endif
 
         Application.Quit();
     }
 
     /// <summary>
-    /// ¿É¼Ç ¸Ş´º È°¼ºÈ­
+    /// í”Œë ˆì´ ë©”ë‰´ í™œì„±í™”
+    /// </summary>
+    public void PlayMenu()
+    {
+        mainMenuHolder.SetActive(false);
+        optionsMenuHolder.SetActive(false);
+        playMenuHolder.SetActive(true);
+    }
+
+    /// <summary>
+    /// ì˜µì…˜ ë©”ë‰´ í™œì„±í™”
     /// </summary>
     public void OptionsMenu()
     {
         mainMenuHolder.SetActive(false);
+        playMenuHolder.SetActive(false);
         optionsMenuHolder.SetActive(true);
     }
 
     /// <summary>
-    /// ¸ŞÀÎ ¸Ş´º È°¼ºÈ­
+    /// ë©”ì¸ ë©”ë‰´ í™œì„±í™”
     /// </summary>
     public void MainMenu()
     {
         mainMenuHolder.SetActive(true);
+        playMenuHolder.SetActive(false);
         optionsMenuHolder.SetActive(false);
     }
 
     /// <summary>
-    /// ÇØ»óµµ º¯°æ
+    /// í•´ìƒë„ ì„¤ì •
     /// </summary>
-    /// <param name="i">ÇØ»óµµ ÀÎµ¦½º</param>
+    /// <param name="i">í•´ìƒë„ ì¸ë±ìŠ¤</param>
     public void SetScreenResolution(int i)
     {
-        // ¼±ÅÃÇÑ ÇØ»óµµ Åä±ÛÀÌ ÄÑÁ® ÀÖ´ÂÁö È®ÀÎ
+        // ì„ íƒëœ í•´ìƒë„ í† ê¸€ì´ ì¼œì ¸ ìˆëŠ”ì§€ í™•ì¸
         if (resolutionToggles[i].isOn)
         {
-            activeScreenResIndex = i;   // ÇöÀç ÇØ»óµµ ÀÎµ¦½º¸¦ ¾÷µ¥ÀÌÆ®
+            activeScreenResIndex = i;   // í˜„ì¬ í•´ìƒë„ ì¸ë±ìŠ¤ë¥¼ ì—…ë°ì´íŠ¸
             float aspectRatio = 16 / 9f;
 
-            // ÁÖ¾îÁø ÇØ»óµµ¿Í ºñÀ²·Î È­¸é ÇØ»óµµ ¼³Á¤, ÀüÃ¼ È­¸éÀÌ ¾Æ´Ô
+            // ì£¼ì–´ì§„ í•´ìƒë„ì™€ ë¹„ìœ¨ë¡œ í™”ë©´ í•´ìƒë„ ì„¤ì •, ì „ì²´ í™”ë©´ì´ ì•„ë‹˜
             Screen.SetResolution(screenWidths[i], (int)(screenWidths[i] / aspectRatio), false);
             PlayerPrefs.SetInt("screen res index", activeScreenResIndex);
             PlayerPrefs.Save();
@@ -99,12 +144,12 @@ public class Menu : MonoBehaviour
     }
 
     /// <summary>
-    /// Ç®½ºÅ©¸° ¼³Á¤
+    /// í’€ìŠ¤í¬ë¦° ì„¤ì •
     /// </summary>
-    /// <param name="isFullscreen">ÀüÃ¼ È­¸é ¿©ºÎ</param>
+    /// <param name="isFullscreen">ì „ì²´ í™”ë©´ ì—¬ë¶€</param>
     public void SetFullscreen(bool isFullscreen)
     {
-        // ÀüÃ¼ È­¸é ¿©ºÎ¿¡ µû¶ó ÇØ»óµµ Åä±ÛÀÇ È°¼ºÈ­ ¿©ºÎ ¼³Á¤
+        // ì „ì²´ í™”ë©´ ëª¨ë“œì— ë”°ë¼ í•´ìƒë„ í† ê¸€ í™œì„±í™” ì—¬ë¶€ ì„¤ì •
         for (int i = 0; i < resolutionToggles.Length; i++)
         {
             resolutionToggles[i].interactable = !isFullscreen;
@@ -112,16 +157,16 @@ public class Menu : MonoBehaviour
 
         if (isFullscreen)
         {
-            // ¸ğµç Áö¿øµÇ´Â ÇØ»óµµ ¸ñ·ÏÀ» °¡Á®¿È
+            // ëª¨ë“  ì§€ì›ë˜ëŠ” í•´ìƒë„ ëª©ë¡ì„ ê°€ì ¸ì˜´
             Resolution[] allResolutions = Screen.resolutions;
-            // °¡Àå Å« ÇØ»óµµ¸¦ ¼±ÅÃ
+            // ê°€ì¥ í° í•´ìƒë„ë¥¼ ì„ íƒ
             Resolution maxResolution = allResolutions[allResolutions.Length - 1];
-            // ¼±ÅÃÇÑ ÇØ»óµµ·Î ÀüÃ¼ È­¸é ¼³Á¤
+            // ìµœëŒ€ë¡œ í•´ìƒë„ë¡œ ì „ì²´ í™”ë©´ ì„¤ì •
             Screen.SetResolution(maxResolution.width, maxResolution.height, true);
         }
         else
         {
-            // ÀüÃ¼ È­¸éÀ» ÇØÁ¦ÇÏ¸é ÀÌÀü¿¡ ¼±ÅÃÇÑ ÇØ»óµµ·Î º¹¿ø
+            // ì „ì²´ í™”ë©´ì„ í•´ì œí•˜ë©´ ì´ì „ì— ì„ íƒëœ í•´ìƒë„ë¡œ ë³µì›
             SetScreenResolution(activeScreenResIndex);
         }
 
@@ -130,27 +175,27 @@ public class Menu : MonoBehaviour
     }
 
     /// <summary>
-    /// ¸¶½ºÅÍ º¼·ı ¼³Á¤
+    /// ë§ˆìŠ¤í„° ë³¼ë¥¨ ì„¤ì •
     /// </summary>
-    /// <param name="value">¸¶½ºÅÍ º¼·ı °ª</param>
+    /// <param name="value">ë§ˆìŠ¤í„° ë³¼ë¥¨ ê°’</param>
     public void SetMasterVolume(float value)
     {
         AudioManager.instance.SetVolume(value, AudioManager.AudioChannel.Master);
     }
 
     /// <summary>
-    /// À½¾Ç º¼·ı ¼³Á¤
+    /// ìŒì•… ë³¼ë¥¨ ì„¤ì •
     /// </summary>
-    /// <param name="value">À½¾Ç º¼·ı °ª</param>
+    /// <param name="value">ìŒì•… ë³¼ë¥¨ ê°’</param>
     public void SetMusicVolume(float value)
     {
         AudioManager.instance.SetVolume(value, AudioManager.AudioChannel.Music);
     }
 
     /// <summary>
-    /// È¿°úÀ½ º¼·ı ¼³Á¤
+    /// íš¨ê³¼ìŒ ë³¼ë¥¨ ì„¤ì •
     /// </summary>
-    /// <param name="value">È¿°úÀ½ º¼·ı °ª</param>
+    /// <param name="value">íš¨ê³¼ìŒ ë³¼ë¥¨ ê°’</param>
     public void SetSfxVolume(float value)
     {
         AudioManager.instance.SetVolume(value, AudioManager.AudioChannel.Sfx);

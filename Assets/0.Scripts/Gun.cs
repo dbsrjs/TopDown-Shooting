@@ -6,50 +6,53 @@ public class Gun : MonoBehaviour
 {
     public enum FireMode
     {
-        Auto,   //¿¬»ç
-        Burst,  //Á¡»ç
-        Single  //´Ü¹ß
+        Auto,   //ìë™
+        Burst,  //ì—°ì‚¬
+        Single  //ë‹¨ë°œ
     };
 
-    public FireMode fireMode;          //»óÅÂ
+    public FireMode fireMode;          //ì‚¬ê²©ëª¨ë“œ
 
-    public Bullet bullet;              //ÃÑ¾Ë
-    public Transform[] bulletSpawn;    //ÃÑ±¸(ÃÑ¾ËÀ» »ı¼ºÇÒ À§Ä¡)
+    public Bullet bullet;              //ì´ì•Œ
+    public Transform[] bulletSpawn;    //ì´êµ¬(ì´ì•Œì´ ìƒì„±ë  ìœ„ì¹˜)
 
-    public float shotTime = 100;      //¿¬»ç·Â
-    public float bulletSpeed = 35;    //ÃÑ¾Ë ¼Óµµ
-    public int burstCount;            //Á¡»ç°¡ ¹ß»çÇÒ ÃÑ¾Ë °³¼ö
-    public int bulletPerMag;          //ÅºÃ¢ ÃÖ´ë Å©±â
+    public float shotTime = 100;      //ë°œì‚¬ì†ë„
+    public float bulletSpeed = 35;    //ì´ì•Œ ì†ë„
+    public int burstCount;            //ì—°ì‚¬ì‹œ ë°œì‚¬ë  ì´ì•Œ ê°œìˆ˜
+    public int bulletPerMag;          //íƒ„ì°½ ìµœëŒ€ í¬ê¸°
 
-    int shotsRemainingInBurst;        //´õ ½ò ÃÑ¾Ë °³¼ö(Á¡»ç)
+    int shotsRemainingInBurst;        //í•œ ë²ˆì— ì  íƒ„ì•½ ê°œìˆ˜(ì—°ì‚¬)
 
-    bool triggerReleasedSinceLastShot;//½ò ÁØºñ µÊ?
-    int bulletRemainingInMag;   //ÇöÀç ÅºÀå¿¡ ³²¾Æ ÀÖ´Â ÃÑ¾Ë °³¼ö
+    bool triggerReleasedSinceLastShot;//ì´ ì  ì¤€ë¹„ ë¨?
+    int bulletRemainingInMag;   //í˜„ì¬ íƒ„ì°½ì— ë‚¨ì•„ ìˆëŠ” ì´ì•Œ ê°œìˆ˜
 
-    [Header("ÀåÀü")]
-    bool isReloading;                 //ÀåÀü Áß?
-    public float reloadTime;          //ÀåÀü ½Ã°£
+    [Header("ì¬ì¥ì „")]
+    bool isReloading;                 //ì¬ì¥ì „ ì¤‘?
+    public float reloadTime;          //ì¬ì¥ì „ ì‹œê°„
 
     Vector3 recoilSmoothDampvelocity;
     float recoilRotSmoothDampVelocity;
 
-    [Header("ÃÑ È¿°ú")]
-    public Transform shell;           //ÅºÇÇ
-    public Transform shellEjection;   //ÅºÇÇ ¹èÃâ±¸
-    MuzzleFlash muzzleFlash;          //ºû
-    float nextshottime;               //´ÙÀ½ ÅºÀ» ¹ß»çÇÒ ½Ã°£
+    [Header("ì´ íš¨ê³¼")]
+    public Transform shell;           //íƒ„í”¼
+    public Transform shellEjection;   //íƒ„í”¼ ë°°ì¶œêµ¬
+    MuzzleFlash muzzleFlash;          //ì´êµ¬ í™”ì—¼
+    float nextshottime;               //ë‹¤ìŒ íƒ„í™˜ ë°œì‚¬ë  ì‹œê°„
 
 
-    [Header("¹İµ¿")]
+    [Header("ë°˜ë™")]
     public Vector2 kickMinMax = new Vector2(0.05f, 0.2f);
     public Vector2 recoilAngleMinMax = new Vector2(3, 5);
     public float recoilMoveSettleTime = 0.1f;
     public float recoilRotationSettleTime = 0.1f;
-    float recoilAngle;  //¹İµ¿ °¢µµ
+    float recoilAngle;  //ë°˜ë™ ê°ë„
 
     [Header("Audio")]
-    public AudioClip shootAudio;    //»ç°İ
-    public AudioClip reloadAudio;   //ÀåÀü
+    public AudioClip shootAudio;    //ë°œí¬ìŒ
+    public AudioClip reloadAudio;   //ì¬ì¥ì „ìŒ
+
+    [Header("Random Gun Settings")]
+    public RandomGunSettings randomGunSettings;
 
     private void Awake()
     {
@@ -58,23 +61,45 @@ public class Gun : MonoBehaviour
 
     private void Start()
     {
+        // ëœë¤ ëª¨ë“œì¼ ë•Œ ì´ ìŠ¤íƒ¯ì„ ëœë¤ìœ¼ë¡œ ì„¤ì •
+        if (GameSettings.Instance != null && GameSettings.Instance.IsRandomMapMode())
+        {
+            ApplyRandomGunStats();
+            // ì›¨ì´ë¸Œê°€ ë°”ë€” ë•Œë§ˆë‹¤ ì´ ìŠ¤íƒ¯ë„ ìƒˆë¡œ ì„¤ì •
+            Spawner.Instance.OnNewWave += OnNewWave;
+        }
+
         shotsRemainingInBurst = burstCount;
         bulletRemainingInMag = bulletPerMag;
     }
 
+    /// <summary>
+    /// ìƒˆ ì›¨ì´ë¸Œ ì‹œì‘ ì‹œ ì´ ìŠ¤íƒ¯ ì¬ì„¤ì •
+    /// </summary>
+    void OnNewWave(int waveNumber)
+    {
+        if (GameSettings.Instance != null && GameSettings.Instance.IsRandomMapMode())
+        {
+            ApplyRandomGunStats();
+            // íƒ„ì°½ë„ ìƒˆë¡œ ë¦¬ì…‹
+            bulletRemainingInMag = bulletPerMag;
+            shotsRemainingInBurst = burstCount;
+        }
+    }
+
     private void LateUpdate()
     {
-        //¹İµ¿¿¡ ¾Ö´Ï¸ŞÀÌ¼Ç Àû¿ëÇÏ±â.
-        transform.localPosition = Vector3.SmoothDamp(transform.localPosition, Vector3.zero, ref recoilSmoothDampvelocity, 0.1f);    //SmoothDamp : ºÎµå·¯¿î ÀÌµ¿À» ±¸Çö
+        //ë°˜ë™ì˜ ì• ë‹ˆë©”ì´ì…˜ ë³µêµ¬í•˜ê¸°.
+        transform.localPosition = Vector3.SmoothDamp(transform.localPosition, Vector3.zero, ref recoilSmoothDampvelocity, 0.1f);    //SmoothDamp : ë¶€ë“œëŸ½ê²Œ ì´ë™ì„ ë§Œë“¦
         recoilAngle = Mathf.SmoothDamp(recoilAngle, 0, ref recoilRotSmoothDampVelocity, recoilRotationSettleTime);
         transform.localEulerAngles = transform.localEulerAngles + Vector3.left * recoilAngle;
 
-        if(!isReloading && bulletRemainingInMag == 0)   //ÀåÀüÁßÀÌ ¾Æ´Ï°í, ÇöÀç ÅºÃ¢¿¡ ÃÑ¾ËÀÌ ¾ø´Ù¸é.
+        if(!isReloading && bulletRemainingInMag == 0)   //ì¬ì¥ì „ì´ ì•„ë‹ˆê³ , í˜„ì¬ íƒ„ì°½ì— ì´ì•Œì´ ì—†ë‹¤ë©´.
             Reload();
     }
 
     /// <summary>
-    /// »ç°İ
+    /// ë°œí¬
     /// </summary>
     void Shoot()
     {
@@ -103,6 +128,13 @@ public class Gun : MonoBehaviour
                 nextshottime = Time.time + shotTime / 1000;
                 Bullet newBullet = Instantiate(bullet, bulletSpawn[i].position, bulletSpawn[i].rotation);
                 newBullet.SetSpeed(bulletSpeed);
+
+                // ì¡°ì¤€ì ì´ ì ì„ ê°€ë¦¬í‚¤ê³  ìˆìœ¼ë©´ ì¹˜ëª…íƒ€ë¡œ ì„¤ì •
+                Crosshairs crosshairs = FindObjectOfType<Crosshairs>();
+                if (crosshairs != null && crosshairs.isTargetingEnemy)
+                {
+                    newBullet.SetCriticalHit(true);
+                }
             }
 
             Instantiate(shell, shellEjection.position, shellEjection.rotation);
@@ -116,11 +148,11 @@ public class Gun : MonoBehaviour
     }
 
     /// <summary>
-    /// ÀçÀåÀü
+    /// ì¬ì¥ì „
     /// </summary>
     public void Reload()
     {
-        if(!isReloading && bulletRemainingInMag != bulletPerMag)    //ÀåÀüÁßÀÌ ¾Æ´Ï°í, ÇöÀç Åº¾àÀÌ ÃÖ´ë Åº¾à°ú °°Áö ¾Ê´Ù¸é
+        if(!isReloading && bulletRemainingInMag != bulletPerMag)    //ì¬ì¥ì „ì´ ì•„ë‹ˆê³ , í˜„ì¬ íƒ„ì°½ì´ ìµœëŒ€ íƒ„í™˜ê³¼ ê°™ì§€ ì•Šë‹¤ë©´
         {
             StartCoroutine(AnimateReload());
             AudioManager.instance.PlaySound(reloadAudio, transform.position);
@@ -128,7 +160,7 @@ public class Gun : MonoBehaviour
     }
 
     /// <summary>
-    /// ÀåÀü ¾Ö´Ï¸ŞÀÌ¼Ç
+    /// ì¬ì¥ì „ ì• ë‹ˆë©”ì´ì…˜
     /// </summary>
     IEnumerator AnimateReload()
     {
@@ -136,9 +168,9 @@ public class Gun : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
 
         float reloadSpeed = 1f / reloadTime;
-        float percent = 0;  //¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ¾ó¸¶³ª ÁøÇàµÇ¾ú´ÂÁö. 
-        Vector3 initialRot = transform.localEulerAngles;    //ÃÊ±â È¸Àü
-        float maxReloadAngle = 30;  //ÃÖ´ë ÀçÀåÀü °¢µµ
+        float percent = 0;  //ì• ë‹ˆë©”ì´ì…˜ì´ ì–¼ë§ˆë‚˜ ì§„í–‰ë˜ì—ˆë‚˜ìš”.
+        Vector3 initialRot = transform.localEulerAngles;    //ì´ˆê¸° íšŒì „
+        float maxReloadAngle = 30;  //ìµœëŒ€ ì¬ì¥ì „ ê°ë„
 
         while (percent < 1)
         {
@@ -151,11 +183,11 @@ public class Gun : MonoBehaviour
         }
 
         isReloading = false;
-        bulletRemainingInMag = bulletPerMag;    //ÀåÀü ½ÃÅ°±â.
+        bulletRemainingInMag = bulletPerMag;    //íƒ„í™˜ ë¦¬ì…‹ë¨.
     }
 
     /// <summary>
-    /// Á¶ÁØÁ¡ ¹Ù¶óº½
+    /// ì´êµ¬ë¥¼ ë°”ë¼ë´„
     /// </summary>
     public void Aim(Vector3 aimPoint)
     {
@@ -166,7 +198,7 @@ public class Gun : MonoBehaviour
     }
 
     /// <summary>
-    /// »ç°İ ½ÃÀÛ
+    /// íŠ¸ë¦¬ê±° ëˆ„ë¦„
     /// </summary>
     public void OnTriggerHold()
     {
@@ -175,11 +207,67 @@ public class Gun : MonoBehaviour
     }
 
     /// <summary>
-    /// »ç°İ Á¾·á
+    /// íŠ¸ë¦¬ê±° ë†“ìŒ
     /// </summary>
     public void OnTriggerRelease()
     {
         triggerReleasedSinceLastShot = true;
         shotsRemainingInBurst = burstCount;
+    }
+
+    /// <summary>
+    /// ëœë¤ ì´ ìŠ¤íƒ¯ ì ìš©
+    /// </summary>
+    void ApplyRandomGunStats()
+    {
+        System.Random rand = new System.Random(System.DateTime.Now.Millisecond);
+
+        // ì‚¬ê²© ëª¨ë“œ ëœë¤ ì„ íƒ
+        System.Array fireModes = System.Enum.GetValues(typeof(FireMode));
+        fireMode = (FireMode)fireModes.GetValue(rand.Next(fireModes.Length));
+
+        // ë°œì‚¬ ì†ë„ ëœë¤ ì„¤ì • (ë‚®ì„ìˆ˜ë¡ ë¹ ë¦„)
+        shotTime = randomGunSettings.minShotTime +
+            (float)rand.NextDouble() * (randomGunSettings.maxShotTime - randomGunSettings.minShotTime);
+
+        // ì´ì•Œ ì†ë„ ëœë¤ ì„¤ì •
+        bulletSpeed = randomGunSettings.minBulletSpeed +
+            (float)rand.NextDouble() * (randomGunSettings.maxBulletSpeed - randomGunSettings.minBulletSpeed);
+
+        // ì—°ì‚¬ ê°œìˆ˜ ëœë¤ ì„¤ì • (Burst ëª¨ë“œì¼ ë•Œë§Œ ì˜ë¯¸ìˆìŒ)
+        burstCount = rand.Next(randomGunSettings.minBurstCount, randomGunSettings.maxBurstCount + 1);
+
+        // íƒ„ì°½ í¬ê¸° ëœë¤ ì„¤ì •
+        bulletPerMag = rand.Next(randomGunSettings.minBulletPerMag, randomGunSettings.maxBulletPerMag + 1);
+
+        // ì¬ì¥ì „ ì‹œê°„ ëœë¤ ì„¤ì •
+        reloadTime = randomGunSettings.minReloadTime +
+            (float)rand.NextDouble() * (randomGunSettings.maxReloadTime - randomGunSettings.minReloadTime);
+
+        Debug.Log($"ëœë¤ ì´ ì„¤ì • ì ìš©: ëª¨ë“œ={fireMode}, ë°œì‚¬ì†ë„={shotTime:F1}, ì´ì•Œì†ë„={bulletSpeed:F1}, ì—°ì‚¬ê°œìˆ˜={burstCount}, íƒ„ì°½={bulletPerMag}, ì¬ì¥ì „={reloadTime:F1}");
+    }
+
+    [System.Serializable]
+    public class RandomGunSettings
+    {
+        [Header("Shot Time Range (ms, ë‚®ì„ìˆ˜ë¡ ë¹ ë¦„)")]
+        public float minShotTime = 50f;
+        public float maxShotTime = 200f;
+
+        [Header("Bullet Speed Range")]
+        public float minBulletSpeed = 20f;
+        public float maxBulletSpeed = 50f;
+
+        [Header("Burst Count Range")]
+        public int minBurstCount = 2;
+        public int maxBurstCount = 5;
+
+        [Header("Magazine Size Range")]
+        public int minBulletPerMag = 10;
+        public int maxBulletPerMag = 30;
+
+        [Header("Reload Time Range")]
+        public float minReloadTime = 1f;
+        public float maxReloadTime = 4f;
     }
 }

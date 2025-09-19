@@ -8,6 +8,10 @@ public class MapGenerator : MonoBehaviour
     public Map[] maps;
     public int mapIndex;
 
+    [Header("Random Map Settings")]
+    public bool useRandomMaps = false;
+    public RandomMapSettings randomSettings;
+
     public Transform tilePrefab;        //타일
     public Transform obstaclePrefab;    //장애물
     public Transform mapFloor;
@@ -33,6 +37,15 @@ public class MapGenerator : MonoBehaviour
         FindObjectOfType<Spawner>().OnNewWave += OnNewWave;
     }
 
+    void Start()
+    {
+        // GameSettings에서 랜덤 맵 설정 확인 (Start에서 확인하여 Menu에서 설정된 값을 가져옴)
+        if (GameSettings.Instance != null)
+        {
+            useRandomMaps = GameSettings.Instance.IsRandomMapMode();
+        }
+    }
+
     void OnNewWave(int waveNumber)
     {
         mapIndex = waveNumber - 1;
@@ -44,7 +57,15 @@ public class MapGenerator : MonoBehaviour
     /// </summary>
     public void GenerateMap()
     {
-        currentMap = maps[mapIndex];
+        if (useRandomMaps)
+        {
+            currentMap = GenerateRandomMap();
+        }
+        else
+        {
+            currentMap = maps[mapIndex];
+        }
+
         tileMap = new Transform[currentMap.mapSize.x, currentMap.mapSize.y];
         System.Random prng = new System.Random(currentMap.seed);
 
@@ -224,6 +245,70 @@ public class MapGenerator : MonoBehaviour
         Coord randomCoord = shuffledOpenTileCords.Dequeue();    //셔플된 타일 좌표 큐의 첫 아이템을 가짐.
         shuffledOpenTileCords.Enqueue(randomCoord);
         return tileMap[randomCoord.x, randomCoord.y];
+    }
+
+    /// <summary>
+    /// 랜덤 맵 생성 함수
+    /// </summary>
+    Map GenerateRandomMap()
+    {
+        Map randomMap = new Map();
+        System.Random rand = new System.Random(System.DateTime.Now.Millisecond);
+
+        // 맵 크기 랜덤 생성
+        randomMap.mapSize = new Coord(
+            rand.Next(randomSettings.minMapSize.x, randomSettings.maxMapSize.x + 1),
+            rand.Next(randomSettings.minMapSize.y, randomSettings.maxMapSize.y + 1)
+        );
+
+        // 장애물 비율 랜덤 생성
+        randomMap.obstaclePercent = randomSettings.minObstaclePercent +
+            (float)rand.NextDouble() * (randomSettings.maxObstaclePercent - randomSettings.minObstaclePercent);
+
+        // 장애물 높이 범위 랜덤 생성
+        randomMap.minObstacleHeight = randomSettings.minObstacleHeight +
+            (float)rand.NextDouble() * (randomSettings.maxObstacleHeight - randomSettings.minObstacleHeight) * 0.3f;
+        randomMap.maxObstacleHeight = randomMap.minObstacleHeight +
+            (float)rand.NextDouble() * (randomSettings.maxObstacleHeight - randomMap.minObstacleHeight);
+
+        // 시드 랜덤 생성
+        randomMap.seed = rand.Next(0, 10000);
+
+        // 색상 랜덤 생성
+        randomMap.foregroundColor = GenerateRandomColor(rand);
+        randomMap.backgroundColor = GenerateRandomColor(rand);
+
+        return randomMap;
+    }
+
+    /// <summary>
+    /// 랜덤 색상 생성
+    /// </summary>
+    Color GenerateRandomColor(System.Random rand)
+    {
+        float hue = (float)rand.NextDouble();
+        float saturation = 0.5f + (float)rand.NextDouble() * 0.5f; // 0.5 ~ 1.0
+        float value = 0.3f + (float)rand.NextDouble() * 0.7f; // 0.3 ~ 1.0
+
+        return Color.HSVToRGB(hue, saturation, value);
+    }
+
+    [System.Serializable]
+    public class RandomMapSettings
+    {
+        [Header("Map Size Range")]
+        public Coord minMapSize = new Coord(10, 10);
+        public Coord maxMapSize = new Coord(30, 30);
+
+        [Header("Obstacle Settings")]
+        [Range(0f, 1f)]
+        public float minObstaclePercent = 0.1f;
+        [Range(0f, 1f)]
+        public float maxObstaclePercent = 0.4f;
+
+        [Header("Obstacle Height Range")]
+        public float minObstacleHeight = 1f;
+        public float maxObstacleHeight = 5f;
     }
 
     [System.Serializable]

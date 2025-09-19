@@ -11,26 +11,30 @@ public class Spawner : MonoBehaviour
     Transform playerT;
 
     public Wave[] waves;
-    public Enemy enemy;             //Àû ÇÁ¸®ÆÕ
+    public Enemy enemy;             //ì  í”„ë¦¬íŒ¹
 
-    Wave currentWave;                                        //ÇöÀç ¿şÀÌºê µ¥ÀÌÅÍ
-    [HideInInspector] public int currentWaveNumber;          //ÇöÀç ¿şÀÌºê ¹øÈ£
+    Wave currentWave;                                        //í˜„ì¬ ì›¨ì´ë¸Œ ë°ì´í„°
+    [HideInInspector] public int currentWaveNumber;          //í˜„ì¬ ì›¨ì´ë¸Œ ë²ˆí˜¸
 
-    int enemiesRemainingToSpawn;    //³²¾ÆÀÖ´Â ½ºÆùÇØ¾ßÇÒ Àû
-    [HideInInspector] public int enemiesRemaningAlive;       //»ì¾Æ ÀÖ´Â ÀûÀÇ ¼ö
+    int enemiesRemainingToSpawn;    //ë‚¨ì•„ìˆëŠ” ìŠ¤í°í•´ì•¼í•  ì 
+    [HideInInspector] public int enemiesRemaningAlive;       //ì‚´ì•„ ìˆëŠ” ì ì˜ ìˆ˜
     float nextSpawnTime;
 
-    MapGenerator map;               //¸Ê »ı¼º±â ÂüÁ¶
+    MapGenerator map;               //ë§µ ì œë„ˆë ˆì´í„° ì°¸ì¡°
 
-    float timeBetweenCampingChecks = 2;  //¾ó¸¶³ª ÀÚÁÖ Á¸¹ö¸¦ Ã¼Å©ÇÒ °ÍÀÎ°¡.
-    float campThresholdDistance = 1.5f;  //Á¸¹ö·Î °£ÁÖµÇÁö ¾ÊÀ¸·Á¸é ÀÌµ¿ÇØ¾ß ÇÒ ÃÖ¼Ò °Å¸®    
-    float nextCampCheckTime;             //´ÙÀ½ Á¸¹ö¸¦ Ã¼Å©ÇÏ´Â ½Ã°£. 
-    Vector3 campPositionOld;             //¸¶Áö¸· Á¸¹ö Ã¼Å© ½Ã ÇÃ·¹ÀÌ¾î À§Ä¡
-    bool isCamping;                      //Á¸¹ö ¿©ºÎ     true: Á¸¹öÁß
+    [Header("Random Enemy Settings")]
+    [HideInInspector] public bool useRandomEnemyStats = false;
+    public RandomEnemySettings randomEnemySettings;
 
-    bool isDisabled;                     //ÇÃ·¹ÀÌ¾î°¡ Á×¾úÀ» ¶§ ÇÃ·¹ÀÌ¾î °ü·Ã ±â´ÉµéÀ» ºñÈ°¼ºÈ° ½ÃÄÑÁÜ.
+    float timeBetweenCampingChecks = 2;  //ì–¼ë§ˆë‚˜ ìì£¼ ì¡´ë²„ë¥¼ ì²´í¬í•  ê²ƒì¸ê°€.
+    float campThresholdDistance = 1.5f;  //ì¡´ë²„ë¡œ ê°„ì£¼ë˜ì§€ ì•Šìœ¼ë ¤ë©´ ì´ë™í•´ì•¼ í•  ìµœì†Œ ê±°ë¦¬
+    float nextCampCheckTime;             //ë‹¤ìŒ ì¡´ë²„ë¥¼ ì²´í¬í•˜ëŠ” ì‹œê°„.
+    Vector3 campPositionOld;             //ë§ˆì§€ë§‰ ì¡´ë²„ ì²´í¬ ì‹œ í”Œë ˆì´ì–´ ìœ„ì¹˜
+    bool isCamping;                      //ì¡´ë²„ ì—¬ë¶€     true: ì¡´ë²„ì¤‘
 
-    public event System.Action<int> OnNewWave;  //»õ·Î¿î ¿şÀÌºê ½ÃÀÛ ½Ã È£ÃâµÇ´Â ÀÌº¥Æ®
+    bool isDisabled;                     //í”Œë ˆì´ì–´ê°€ ì£½ì—ˆì„ ë•Œ í”Œë ˆì´ì–´ ê´€ë ¨ ê¸°ëŠ¥ë“¤ì„ ë¹„í™œì„±í™œ ì‹œì¼œì¤Œ.
+
+    public event System.Action<int> OnNewWave;  //ìƒˆë¡œìš´ ì›¨ì´ë¸Œ ì‹œì‘ ì‹œ í˜¸ì¶œë˜ëŠ” ì´ë²¤íŠ¸
 
     private void Awake()
     {
@@ -47,26 +51,33 @@ public class Spawner : MonoBehaviour
         playerEntity.OnDeath += OnPlayerDeath;
 
         map = FindObjectOfType<MapGenerator>();
-        NextWave(); // Ã¹ ¿şÀÌºê ½ÃÀÛ
+
+        // ë§µ ì œë„ˆë ˆì´í„°ê°€ ëœë¤ ëª¨ë“œì¼ ë•Œ ì  ìŠ¤íƒ¯ë„ ëœë¤ìœ¼ë¡œ ì„¤ì •
+        if (map != null && map.useRandomMaps)
+        {
+            useRandomEnemyStats = true;
+        }
+
+        NextWave(); // ì²« ì›¨ì´ë¸Œ ì‹œì‘
     }
 
     private void Update()
     {
-        if (!isDisabled) //ÇÃ·¹ÀÌ¾î°¡ Á×Áö ¾Ê¾ÒÀ» ¶§
+        if (!isDisabled) //í”Œë ˆì´ì–´ê°€ ì‚´ì•„ ìˆì„ ë•Œ
         {
             if (Time.time > nextCampCheckTime)
             {
-                nextCampCheckTime = Time.time + timeBetweenCampingChecks;   //´ÙÀ½ Á¸¹ö Ã¼Å© ½Ã°£
+                nextCampCheckTime = Time.time + timeBetweenCampingChecks;   //ë‹¤ìŒ ìº í•‘ ì²´í¬ ì‹œê°„
 
-                isCamping = (Vector3.Distance(playerT.position, campPositionOld) < campThresholdDistance);  // ÇÃ·¹ÀÌ¾î°¡ ÀÌµ¿Çß´ÂÁö È®ÀÎ
-                campPositionOld = playerT.position; // ÇöÀç À§Ä¡¸¦ Á¸¹ö Ã¼Å© ±âÁØ À§Ä¡·Î ÀúÀå
+                isCamping = (Vector3.Distance(playerT.position, campPositionOld) < campThresholdDistance);  // í”Œë ˆì´ì–´ê°€ ì´ë™í–ˆëŠ”ì§€ í™•ì¸
+                campPositionOld = playerT.position; // í˜„ì¬ ìœ„ì¹˜ë¥¼ ë‹¤ìŒ ì²´í¬ ì‹œì˜ ìœ„ì¹˜ë¡œ ì €ì¥
             }
 
-            // Àû ½ºÆù Ã³¸®
+            // ì  ìŠ¤í° ì²˜ë¦¬
             if ((enemiesRemainingToSpawn > 0 || currentWave.infinite) && Time.time > nextSpawnTime)
             {
-                enemiesRemainingToSpawn--;  // ³²Àº ½ºÆù ¼ö °¨¼Ò
-                nextSpawnTime = Time.time + currentWave.timeBetweenSpawns;  // ´ÙÀ½ ½ºÆù ½Ã°£ ¼³Á¤
+                enemiesRemainingToSpawn--;  // ìŠ¤í° ì˜ˆì •ì¸ ì  ê°ì†Œ
+                nextSpawnTime = Time.time + currentWave.timeBetweenSpawns;  // ë‹¤ìŒ ìŠ¤í° ì‹œê°„ ì„¤ì •
 
                 StartCoroutine("SpawnEnemy");
             }
@@ -76,52 +87,52 @@ public class Spawner : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.F1))
             {
-                StopCoroutine("SpawnEnemy");    //Àû ½ºÆù ÁßÁö
-                foreach (Enemy enemy in FindObjectsOfType<Enemy>())  //¸ğµç Àû »èÁ¦
+                StopCoroutine("SpawnEnemy");    //ì  ìŠ¤í° ì¤‘ì§€
+                foreach (Enemy enemy in FindObjectsOfType<Enemy>())  //ëª¨ë“  ì  ì œê±°
                     Destroy(enemy.gameObject);
 
-                NextWave(); //´ÙÀ½ ¶ó¿îµå·Î ÀÌµ¿
+                NextWave(); //ë‹¤ìŒ ì›¨ì´ë¸Œë¡œ ì´ë™
             }
         }
     }
 
     /// <summary>
-    /// Àû »ı¼º
+    /// ì  ìŠ¤í°
     /// </summary>
     IEnumerator SpawnEnemy()
     {
-        float spawnDelay = 1;       //»ı¼º ´ë±â ½Ã°£
-        float tileFlashSpeed = 4;   //Å¸ÀÏÀÌ ¹İÂ¦°Å¸®´Â ¼Óµµ
+        float spawnDelay = 1;       //ìŠ¤í° ì˜ˆê³  ì‹œê°„
+        float tileFlashSpeed = 4;   //íƒ€ì¼ì´ ê¹œë¹¡ê±°ë¦¬ëŠ” ì†ë„
 
-        // ÀûÀÌ ½ºÆùµÉ Å¸ÀÏÀ» ¼±ÅÃ
+        // ëœë¤í•œ ì—´ë¦° íƒ€ì¼ì„ ì„ íƒ
         Transform spawnTile = map.GetRandomOpenTile();
 
-        if (isCamping)  //ÇÃ·¹ÀÌ¾î°¡ Á¸¹ö ÁßÀÌ¶ó¸é ÇÃ·¹ÀÌ¾î À§Ä¡¿¡ ½ºÆù
+        if (isCamping)  //í”Œë ˆì´ì–´ê°€ ìº í•‘ ìƒíƒœë¼ë©´ í”Œë ˆì´ì–´ ìœ„ì¹˜ì— ìŠ¤í°
             spawnTile = map.GetTileFromPosition(playerT.position);
 
         Material tileMat = spawnTile.GetComponent<Renderer>().material;
 
-        Color initialColor = Color.white;   //±âº» »ö
-        Color flashColor = Color.red;       //Å¸ÀÏÀÌ ±ôºıÀÏ ¶§ »ö
+        Color initialColor = Color.white;   //ê¸°ë³¸ ìƒ‰
+        Color flashColor = Color.red;       //íƒ€ì¼ì´ ë³€í•  ë•Œì˜ ìƒ‰
         float spawnTimer = 0;
 
-        // ½ºÆù ´ë±â Áß Å¸ÀÏÀÌ ±ôºıÀÓ
+        // ìŠ¤í° ì˜ˆê³  ë° íƒ€ì¼ ê¹œë¹¡ì„
         while (spawnTimer < spawnDelay)
         {
-            tileMat.color = Color.Lerp(initialColor, flashColor, Mathf.PingPong(spawnTimer * tileFlashSpeed, 1));   //ÀûÀÌ ½ºÆùÇÏ´Â À§Ä¡ÀÇ Å¸ÀÏÀ» ±ôºı°Å¸®°Ô ÇØ¼­ ÀûÀÌ ½ºÆùÇÒ À§Ä¡¸¦ ¾Ë·ÁÁÜ.
+            tileMat.color = Color.Lerp(initialColor, flashColor, Mathf.PingPong(spawnTimer * tileFlashSpeed, 1));   //ì ì´ ìŠ¤í°ë˜ëŠ” ìœ„ì¹˜ì˜ íƒ€ì¼ì„ ë¹¨ê°›ê²Œ ê¹œë¹¡ê±°ë ¤ì„œ ì ì´ ìŠ¤í°ë  ìœ„ì¹˜ë¥¼ ì•Œë ¤ì¤Œ.
 
             spawnTimer += Time.deltaTime;
             yield return null;
         }
 
-        // Àû ½ºÆù
-        Enemy spawnedEnemy = Instantiate(enemy, spawnTile.position + Vector3.up, Quaternion.identity) as Enemy;// Àû »ı¼º
-        spawnedEnemy.OnDeath += OnEnemyDeath;   // ÀûÀÌ Á×¾úÀ» ¶§ È£ÃâµÉ ¸Ş¼­µå µî·Ï
-        spawnedEnemy.SetCharacteristics(currentWave.moveSpeed, currentWave.hitsToKillPlayer, currentWave.enemyHealth, currentWave.skinColor); // Àû ¼Ó¼º ¼³Á¤
+        // ì  ìƒì„±
+        Enemy spawnedEnemy = Instantiate(enemy, spawnTile.position + Vector3.up, Quaternion.identity) as Enemy;// ì  ìƒì„±
+        spawnedEnemy.OnDeath += OnEnemyDeath;   // ì ì´ ì£½ì—ˆì„ ë•Œ í˜¸ì¶œë  ë©”ì„œë“œ ë“±ë¡
+        spawnedEnemy.SetCharacteristics(currentWave.moveSpeed, currentWave.hitsToKillPlayer, currentWave.enemyHealth, currentWave.skinColor); // ì  ì†ì„± ì„¤ì •
     }
 
     /// <summary>
-    /// ÇÃ·¹ÀÌ¾î°¡ Á×¾úÀ» ¶§
+    /// í”Œë ˆì´ì–´ê°€ ì£½ì—ˆì„ ë•Œ
     /// </summary>
     void OnPlayerDeath()
     {
@@ -129,18 +140,18 @@ public class Spawner : MonoBehaviour
     }
 
     /// <summary>
-    /// ÀûÀÌ Á×¾úÀ» ¶§
+    /// ì ì´ ì£½ì—ˆì„ ë•Œ
     /// </summary>
     void OnEnemyDeath()
     {
-        enemiesRemaningAlive--; // »ì¾ÆÀÖ´Â Àû ¼ö °¨¼Ò
+        enemiesRemaningAlive--; // ì‚´ì•„ìˆëŠ” ì  ìˆ˜ ê°ì†Œ
 
-        if (enemiesRemaningAlive == 0)  // ¸ğµç ÀûÀÌ Á×¾úÀ¸¸é ´ÙÀ½ ¿şÀÌºê·Î ÀÌµ¿
+        if (enemiesRemaningAlive == 0)  // ëª¨ë“  ì ì´ ì£½ì—ˆë‹¤ë©´ ë‹¤ìŒ ì›¨ì´ë¸Œë¡œ ì´ë™
             NextWave();
     }
 
     /// <summary>
-    /// »õ·Î¿î ¿şÀÌºê°¡ ½ÃÀÛ µÉ ¶§¸¶´Ù ÇÃ·¹ÀÌ¾îÀÇ À§Ä¡ ÃÊ±âÈ­
+    /// ìƒˆë¡œìš´ ì›¨ì´ë¸Œê°€ ì‹œì‘ ì‹œ í”Œë ˆì´ì–´ì˜ ìœ„ì¹˜ ì´ˆê¸°í™”
     /// </summary>
     void ResetPlayerPosition()
     {
@@ -148,32 +159,45 @@ public class Spawner : MonoBehaviour
     }
 
     /// <summary>
-    /// ÃÖÁ¾ ¿şÀÌºê(³­ÀÌµµ ¾î·Á¿öÁü)
+    /// ë¬´í•œ ì›¨ì´ë¸Œ(ë‚œì´ë„ ì¡°ì •ë¨)
     /// </summary>
     void InfiniteWave()
     {
-        timeBetweenCampingChecks = 1f;  //¾ó¸¶³ª ÀÚÁÖ Á¸¹ö¸¦ Ã¼Å©ÇÒ °ÍÀÎ°¡.  (±âÁ¸ °ª: 2f)
-        campThresholdDistance = 2f;   //Á¸¹ö·Î °£ÁÖµÇÁö ¾ÊÀ¸·Á¸é ÀÌµ¿ÇØ¾ß ÇÒ ÃÖ¼Ò °Å¸®  (±âÁ¸ °ª: 1.5f)
+        timeBetweenCampingChecks = 1f;  //ì–¼ë§ˆë‚˜ ìì£¼ ì¡´ë²„ë¥¼ ì²´í¬í•  ê²ƒì¸ê°€.  (ê¸°ì¡´ ê°’: 2f)
+        campThresholdDistance = 2f;   //ì¡´ë²„ë¡œ ê°„ì£¼ë˜ì§€ ì•Šìœ¼ë ¤ë©´ ì´ë™í•´ì•¼ í•  ìµœì†Œ ê±°ë¦¬  (ê¸°ì¡´ ê°’: 1.5f)
     }
 
     /// <summary>
-    /// ´ÙÀ½ ¿şÀÌºê·Î ÀÌµ¿ÇÏ´Â ¸Ş¼­µå
+    /// ë‹¤ìŒ ì›¨ì´ë¸Œë¡œ ì´ë™í•˜ëŠ” ë©”ì„œë“œ
     /// </summary>
     void NextWave()
     {
-        if (currentWaveNumber > 0)  //³²Àº ÀûÀÌ ¾ø´Ù¸é ¿şÀÌºê ¿Ï·á »ç¿îµå Àç»ı
+        if (currentWaveNumber > 0)  //ì›¨ì´ë¸Œ í´ë¦¬ì–´í–ˆë‹¤ë©´ ì›¨ì´ë¸Œ ì™„ë£Œ ì‚¬ìš´ë“œ ì¬ìƒ
             AudioManager.instance.PlaySound2D("Level Complete");
 
-        currentWaveNumber++;     // ¿şÀÌºê ¹øÈ£ Áõ°¡
+        currentWaveNumber++;     // ì›¨ì´ë¸Œ ë²ˆí˜¸ ì¦ê°€
 
-        if (currentWaveNumber - 1 < waves.Length)   //´ÙÀ½ ¿şÀÌºê°¡ ÀÖ´Ù¸é..?
+        // ëœë¤ ëª¨ë“œì¼ ë•ŒëŠ” ë¬´í•œíˆ ì›¨ì´ë¸Œ ê³„ì† ìƒì„±
+        bool isRandomMode = useRandomEnemyStats && map.useRandomMaps;
+
+        if (currentWaveNumber - 1 < waves.Length || isRandomMode)   //í˜„ì¬ ì›¨ì´ë¸Œê°€ ìˆê±°ë‚˜ ëœë¤ ëª¨ë“œë¼ë©´
         {
-            currentWave = waves[currentWaveNumber - 1];         // ÇöÀç ¿şÀÌºê µ¥ÀÌÅÍ¸¦ °»½Å
+            // ëœë¤ ë§µì´ í™œì„±í™”ë˜ì—ˆì„ ë•Œ ì›¨ì´ë¸Œ ìƒì„±
+            if (isRandomMode)
+            {
+                currentWave = GenerateRandomWave();
+                // ëœë¤ ëª¨ë“œì—ì„œëŠ” ì›¨ì´ë¸Œê°€ ì§„í–‰ë ìˆ˜ë¡ ë‚œì´ë„ ì¦ê°€
+                AdjustDifficultyForWave(currentWaveNumber);
+            }
+            else
+            {
+                currentWave = waves[currentWaveNumber - 1];         // ê¸°ì¡´ ì›¨ì´ë¸Œ ë°ì´í„°ë¥¼ ì‚¬ìš©
+            }
 
-            enemiesRemainingToSpawn = currentWave.enemyCount;   // ÀÌ¹ø ¿şÀÌºê¿¡¼­ ½ºÆùÇÒ Àû ¼ö
-            enemiesRemaningAlive = enemiesRemainingToSpawn;     // ÀÌ¹ø ¿şÀÌºê¿¡¼­ ³²Àº Àû ¼ö
+            enemiesRemainingToSpawn = currentWave.enemyCount;   // ì´ë²ˆ ì›¨ì´ë¸Œì—ì„œ ìŠ¤í°í•  ì  ìˆ˜
+            enemiesRemaningAlive = enemiesRemainingToSpawn;     // ì´ë²ˆ ì›¨ì´ë¸Œì—ì„œ ì‚´ì•„ ìˆì„ ì  ìˆ˜
 
-            if (OnNewWave != null)  // »õ·Î¿î ¿şÀÌºê ÀÌº¥Æ® È£Ãâ
+            if (OnNewWave != null)  // ìƒˆë¡œìš´ ì›¨ì´ë¸Œ ì´ë²¤íŠ¸ í˜¸ì¶œ
                 OnNewWave(currentWaveNumber);
 
             if(currentWave.infinite == true)
@@ -182,17 +206,110 @@ public class Spawner : MonoBehaviour
             ResetPlayerPosition();
         }
     }
-    
 
-    [System.Serializable]   //Inspector Ã¢¿¡ ³ëÃâ ½ÃÄÑÁÜ
+    /// <summary>
+    /// ëœë¤ ì›¨ì´ë¸Œ ìƒì„± í•¨ìˆ˜
+    /// </summary>
+    Wave GenerateRandomWave()
+    {
+        Wave randomWave = new Wave();
+        System.Random rand = new System.Random(System.DateTime.Now.Millisecond + currentWaveNumber);
+
+        // ì ì˜ ìˆ˜ ëœë¤ ìƒì„±
+        randomWave.enemyCount = rand.Next(randomEnemySettings.minEnemyCount, randomEnemySettings.maxEnemyCount + 1);
+
+        // ìŠ¤í° ê°„ê²© ëœë¤ ìƒì„±
+        randomWave.timeBetweenSpawns = randomEnemySettings.minTimeBetweenSpawns +
+            (float)rand.NextDouble() * (randomEnemySettings.maxTimeBetweenSpawns - randomEnemySettings.minTimeBetweenSpawns);
+
+        // ì´ë™ ì†ë„ ëœë¤ ìƒì„±
+        randomWave.moveSpeed = randomEnemySettings.minMoveSpeed +
+            (float)rand.NextDouble() * (randomEnemySettings.maxMoveSpeed - randomEnemySettings.minMoveSpeed);
+
+        // í”Œë ˆì´ì–´ ì²˜ì¹˜ì— í•„ìš”í•œ ê³µê²© íšŸìˆ˜ ëœë¤ ìƒì„±
+        randomWave.hitsToKillPlayer = rand.Next(randomEnemySettings.minHitsToKillPlayer, randomEnemySettings.maxHitsToKillPlayer + 1);
+
+        // ì  HP ëœë¤ ìƒì„±
+        randomWave.enemyHealth = randomEnemySettings.minEnemyHealth +
+            (float)rand.NextDouble() * (randomEnemySettings.maxEnemyHealth - randomEnemySettings.minEnemyHealth);
+
+        // ì ì˜ ìƒ‰ìƒ ëœë¤ ìƒì„±
+        randomWave.skinColor = GenerateRandomEnemyColor(rand);
+
+        // ë¬´í•œ ì›¨ì´ë¸Œ ì„¤ì • (ê¸°ë³¸ false)
+        randomWave.infinite = false;
+
+        return randomWave;
+    }
+
+    /// <summary>
+    /// ëœë¤ ì  ìƒ‰ìƒ ìƒì„±
+    /// </summary>
+    Color GenerateRandomEnemyColor(System.Random rand)
+    {
+        float hue = (float)rand.NextDouble();
+        float saturation = 0.6f + (float)rand.NextDouble() * 0.4f; // 0.6 ~ 1.0
+        float value = 0.4f + (float)rand.NextDouble() * 0.6f; // 0.4 ~ 1.0
+
+        return Color.HSVToRGB(hue, saturation, value);
+    }
+
+    /// <summary>
+    /// ì›¨ì´ë¸Œì— ë”°ë¥¸ ë‚œì´ë„ ì¡°ì •
+    /// </summary>
+    void AdjustDifficultyForWave(int waveNumber)
+    {
+        // ì›¨ì´ë¸Œê°€ ì§„í–‰ë ìˆ˜ë¡ ë‚œì´ë„ ì¦ê°€ (ìµœëŒ€ 20% ì¦ê°€)
+        float difficultyMultiplier = 1f + Mathf.Min(waveNumber * 0.05f, 0.2f);
+
+        // ì ì˜ ìˆ˜ ì¦ê°€
+        currentWave.enemyCount = Mathf.RoundToInt(currentWave.enemyCount * difficultyMultiplier);
+
+        // ì  ì²´ë ¥ ì¦ê°€
+        currentWave.enemyHealth *= difficultyMultiplier;
+
+        // ì  ì´ë™ ì†ë„ ì¦ê°€
+        currentWave.moveSpeed *= (1f + Mathf.Min(waveNumber * 0.02f, 0.2f));
+
+        // ìŠ¤í° ê°„ê²© ê°ì†Œ (ë” ë¹ ë¥´ê²Œ ìŠ¤í°)
+        currentWave.timeBetweenSpawns *= (1f - Mathf.Min(waveNumber * 0.01f, 0.3f));
+
+        Debug.Log($"ì›¨ì´ë¸Œ {waveNumber} ë‚œì´ë„ ì¡°ì •: ì  ìˆ˜={currentWave.enemyCount}, ì²´ë ¥={currentWave.enemyHealth:F1}, ì†ë„={currentWave.moveSpeed:F1}, ìŠ¤í°ê°„ê²©={currentWave.timeBetweenSpawns:F1}");
+    }
+
+    [System.Serializable]
+    public class RandomEnemySettings
+    {
+        [Header("Enemy Count Range")]
+        public int minEnemyCount = 3;
+        public int maxEnemyCount = 15;
+
+        [Header("Spawn Time Range")]
+        public float minTimeBetweenSpawns = 0.5f;
+        public float maxTimeBetweenSpawns = 3f;
+
+        [Header("Movement Speed Range")]
+        public float minMoveSpeed = 2f;
+        public float maxMoveSpeed = 8f;
+
+        [Header("Player Damage Range")]
+        public int minHitsToKillPlayer = 2;
+        public int maxHitsToKillPlayer = 6;
+
+        [Header("Enemy Health Range")]
+        public float minEnemyHealth = 1f;
+        public float maxEnemyHealth = 5f;
+    }
+
+    [System.Serializable]   //Inspector ì°½ì— ë³´ì´ê²Œ í•´ì£¼ê¸°
     public class Wave
     {
-        public bool infinite;           //ÇöÀç ¿şÀÌºê°¡ ¹«ÇÑÇÑ°¡?
-        public int enemyCount;          //ÀûÀÇ ¼ö
-        public float timeBetweenSpawns; //½ºÆù °£°İ
-        public float moveSpeed;         //ÀÌµ¿ ¼Óµµ
-        public int hitsToKillPlayer;    //ÇÃ·¹ÀÌ¾î HP
-        public float enemyHealth;       //Àû HP
-        public Color skinColor;         //»ö»ó
+        public bool infinite;           //ë¬´í•œ ì›¨ì´ë¸Œê°€ í™œì„±í™”ì¸ê°€?
+        public int enemyCount;          //ì ì˜ ìˆ˜
+        public float timeBetweenSpawns; //ìŠ¤í° ê°„ê²©
+        public float moveSpeed;         //ì´ë™ ì†ë„
+        public int hitsToKillPlayer;    //í”Œë ˆì´ì–´ ì²˜ì¹˜ íšŸìˆ˜
+        public float enemyHealth;       //ì  HP
+        public Color skinColor;         //ìƒ‰ìƒ
     }
 }

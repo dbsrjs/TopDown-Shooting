@@ -5,24 +5,25 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    public LayerMask collisionMask; // ÃÑ¾ËÀÌ Ãæµ¹ÇÒ ¼ö ÀÖ´Â ·¹ÀÌ¾î ¸¶½ºÅ©
+    public LayerMask collisionMask; // ì´ì•Œì´ ì¶©ëŒí•  ìˆ˜ ìˆëŠ” ë ˆì´ì–´ ë§ˆìŠ¤í¬
     public Color trailColor;
 
     float speed = 10;
     float damage = 1;
+    bool isCriticalHit = false; // ì¹˜ëª…íƒ€ ì—¬ë¶€
 
-    float what_do_I_call_this_variable = 0.1f;  //ÀûÀÇ ÀÌµ¿°ú ÃÑ¾ËÀÇ ÀÌµ¿ÀÌ °°Àº ÇÁ·¹ÀÓ¿¡¼­ ÀÏ¾î³ª¸é Ãæµ¹ÀÌ ¾È µÇ´Â ÀÏÀ» º¸¾È ÇØÁÖ´Â ³ğ.
+    float what_do_I_call_this_variable = 0.1f;  //ê³ ì† ì´ë™ ì‹œ ì´ì•Œì´ ì´ë™í•  ê²ƒìœ¼ë¡œ ì˜ˆìƒë˜ëŠ” ëŒ€ìƒì„ ë„˜ì–´ ì¶©ëŒì„ ë†“ì¹  ìˆ˜ ìˆëŠ” ë¬¸ì œë¥¼ ë°©ì§€í•˜ëŠ” ê°’.
 
     private void Start()
     {
         Accuracy.Instance.IncrementShots();
         Destroy(gameObject, 3f);
 
-        // ÃÑ¾ËÀÌ »ı¼ºµÈ À§Ä¡¿¡¼­ 0.1f ¹İ°æ ³»¿¡ Ãæµ¹ÇÒ ¼ö ÀÖ´Â ¹°Ã¼°¡ ÀÖ´ÂÁö È®ÀÎ
+        // ì´ì•Œì´ ìƒì„±ëœ ìœ„ì¹˜ì—ì„œ 0.1f ë°˜ê²½ ì•ˆì— ì¶©ëŒí•  ìˆ˜ ìˆëŠ” ë¬¼ì²´ê°€ ìˆëŠ”ì§€ í™•ì¸
         Collider[] initialCollisions = Physics.OverlapSphere(transform.position, 0.1f, collisionMask);
 
-        // ¸¸¾à »ı¼º ½ÃÁ¡¿¡ ÀÌ¹Ì Ãæµ¹ ¹°Ã¼¿Í °ãÃÄ ÀÖÀ¸¸é OnHitObject È£Ãâ
-        if (initialCollisions.Length > 0)   //ÃÑ¾ËÀÌ »ı¼º µÆÀ» ¶§ ¾î¶² Ãæµ¹Ã¼ ¿ÀºêÁ§Æ®¿Í ÀÌ¹Ì °ãÄ£ »óÅÂÀÏ ¶§
+        // ë§Œì•½ ê±°ê¸°ì— ì–´ë–¤ ì¶©ëŒì²´ ì˜¤ë¸Œì íŠ¸ê°€ ì´ë¯¸ ë‹¿ì€ ìƒíƒœë¼ë©´ OnHitObject í˜¸ì¶œ
+        if (initialCollisions.Length > 0)   //ì´ì•Œì´ ìƒì„± ì§í›„ ì–´ë–¤ ì¶©ëŒì²´ ì˜¤ë¸Œì íŠ¸ì™€ ì´ë¯¸ ë‹¿ì€ ìƒíƒœë¼ë©´
             OnHitObject(initialCollisions[0], transform.position);
 
         GetComponent<TrailRenderer>().material.SetColor("_TintColor", trailColor);
@@ -33,40 +34,57 @@ public class Bullet : MonoBehaviour
         speed = _speed;
     }
 
+    /// <summary>
+    /// ì¹˜ëª…íƒ€ ì„¤ì •
+    /// </summary>
+    public void SetCriticalHit(bool criticalHit)
+    {
+        isCriticalHit = criticalHit;
+    }
+
     void Update()
     {
-        float moveDistance = speed * Time.deltaTime;       // ÀÌµ¿ÇÒ °Å¸®¸¦ °è»ê (¼Óµµ * ÇÁ·¹ÀÓ ½Ã°£)
-        CheckCollisions(moveDistance);                     // ÀÌµ¿ °æ·Î¿¡¼­ Ãæµ¹ Ã¼Å©
-        transform.Translate(Vector3.right * moveDistance); // ÃÑ¾ËÀ» ¿À¸¥ÂÊÀ¸·Î ÀÌµ¿
+        float moveDistance = speed * Time.deltaTime;       // ì´ë™í•  ê±°ë¦¬ë¥¼ ê³„ì‚° (ì†ë„ * ë¸íƒ€íƒ€ì„)
+        CheckCollisions(moveDistance);                     // ì´ë™ ê²½ë¡œì—ì„œ ì¶©ëŒ ì²´í¬
+        transform.Translate(Vector3.right * moveDistance); // ì´ì•Œì„ ì˜¤ë¥¸ìª½ìœ¼ë¡œ ì´ë™
     }
 
     /// <summary>
-    /// ÀÌµ¿ °Å¸® ³»¿¡ Ãæµ¹ÇÒ ¹°Ã¼°¡ ÀÖ´ÂÁö Ã¼Å©ÇÏ´Â ÇÔ¼ö
+    /// ì´ë™ ê±°ë¦¬ ë‚´ì— ì¶©ëŒí•˜ëŠ” ë¬¼ì²´ê°€ ìˆëŠ”ì§€ ì²´í¬í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     void CheckCollisions(float moveDistance)
     {
-        // ÃÑ¾ËÀÇ ÇöÀç À§Ä¡¿¡¼­ ¾ÕÂÊÀ¸·Î Raycast¸¦ ½÷¼­ Ãæµ¹À» °¨Áö
+        // ì´ì•Œì˜ í˜„ì¬ ìœ„ì¹˜ì—ì„œ ì§„í–‰ë°©í–¥ìœ¼ë¡œ Raycastë¥¼ ì‚¬ìš©í•´ ì¶©ëŒì„ ê°ì§€
         Ray ray = new Ray(transform.position, transform.right);
         RaycastHit hit;
 
-        // Ray°¡ Ãæµ¹Ã¼¸¦ °¨ÁöÇÏ¸é OnHitObject È£Ãâ
+        // Rayê°€ ì¶©ëŒì²´ì™€ êµì°¨í•˜ë©´ OnHitObject í˜¸ì¶œ
         if (Physics.Raycast(ray, out hit, moveDistance + what_do_I_call_this_variable, collisionMask, QueryTriggerInteraction.Collide))
             OnHitObject(hit.collider, hit.point);
     }
 
     /// <summary>
-    /// ÃÑ¾ËÀÌ Ãæµ¹ÇÑ ¹°Ã¼¿¡ ´ëÇÑ Ã³¸®
+    /// ì´ì•Œì´ ì¶©ëŒí•œ ë¬¼ì²´ì— ëŒ€í•œ ì²˜ë¦¬
     /// </summary>
     void OnHitObject(Collider c, Vector3 hitPoint)
     {
-        // Ãæµ¹ÇÑ ¹°Ã¼°¡ IDamageable ÀÎÅÍÆäÀÌ½º¸¦ ±¸ÇöÇÏ°í ÀÖ´Ù¸é µ¥¹ÌÁö¸¦ °¡ÇÔ
+        // ì¶©ëŒí•œ ë¬¼ì²´ê°€ IDamageable ì¸í„°í˜ì´ìŠ¤ë¥¼ êµ¬í˜„í•˜ê³  ìˆë‹¤ë©´ ë°ë¯¸ì§€ë¥¼ ê°€í•¨
         IDamageable damageableObject = c.GetComponent<IDamageable>();
         if (damageableObject != null)
         {
-            damageableObject.TakeHit(damage, hitPoint, transform.right);
+            float finalDamage = damage;
+
+            // ì¹˜ëª…íƒ€ì¼ ê²½ìš° ë°ë¯¸ì§€ 2ë°°
+            if (isCriticalHit)
+            {
+                finalDamage *= 2f;
+                Debug.Log("ì¹˜ëª…íƒ€! ë°ë¯¸ì§€: " + finalDamage);
+            }
+
+            damageableObject.TakeHit(finalDamage, hitPoint, transform.right, isCriticalHit);
             Accuracy.Instance.IncrementHits();
         }
-        
+
         Destroy(gameObject);
     }
 }

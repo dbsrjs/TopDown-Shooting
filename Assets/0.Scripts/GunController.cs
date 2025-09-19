@@ -6,7 +6,7 @@ public class GunController : MonoBehaviour
 {
     public Transform  weaponHold;
     public Gun[] allGuns;
-    Gun equippedGun; //ÇöÀç ÀåÂøÁßÀÎ ÃÑ
+    Gun equippedGun; //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 
     public void EquipGun(Gun gunToEquip)
     {
@@ -19,11 +19,19 @@ public class GunController : MonoBehaviour
 
     public void EquipGun(int weaponIndex)
     {
-        EquipGun(allGuns[weaponIndex]);
+        // ì¸ë±ìŠ¤ ë²”ìœ„ í™•ì¸
+        if (weaponIndex >= 0 && weaponIndex < allGuns.Length)
+        {
+            EquipGun(allGuns[weaponIndex]);
+        }
+        else
+        {
+            Debug.LogWarning($"ë¬´ê¸° ì¸ë±ìŠ¤ {weaponIndex}ê°€ ë²”ìœ„ë¥¼ ë²—ì–´ë‚¬ìŠµë‹ˆë‹¤. ë¬´ê¸° ë°°ì—´ í¬ê¸°: {allGuns.Length}");
+        }
     }
 
     /// <summary>
-    /// ¹æ¾Æ¼è¸¦ ´ç±è
+    /// ï¿½ï¿½Æ¼è¸¦ ï¿½ï¿½ï¿½
     /// </summary>
     public void OnTriggerHold()
     {
@@ -34,7 +42,7 @@ public class GunController : MonoBehaviour
     }
 
     /// <summary>
-    /// ¹æ¾Æ¼è¸¦ ³õÀ½
+    /// ï¿½ï¿½Æ¼è¸¦ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void OnTriggerRelease()
     {
@@ -42,7 +50,7 @@ public class GunController : MonoBehaviour
     }
 
     /// <summary>
-    /// Á¶ÁØÁ¡ ¹Ù¶óº½
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¶ï¿½
     /// </summary>
     public void Aim(Vector3 aimPoint)
     {
@@ -53,7 +61,7 @@ public class GunController : MonoBehaviour
     }
 
     /// <summary>
-    /// ÀçÀåÀü
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void Reload()
     {

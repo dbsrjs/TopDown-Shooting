@@ -8,10 +8,10 @@ public class LivingEntity : MonoBehaviour, IDamageable
     public float health { get; protected set; }
     protected bool dead;
 
-    public event System.Action OnDeath; //OnDeath´Â OnEnemyDeath¸¦ È£ÃâÇØ¿È.
-    //System.Action : µ¨¸®°ÔÀÌÆ® ¸Ş¼­µå
-    //µ¨¸®°ÔÀÌÆ® ¸Ş¼­µå : ´Ù¸¥ ¸Ş¼­µåÀÇ À§Ä¡¸¦ °¡¸£Å°°í ºÒ·¯¿Ã ¼ö ÀÖ´Â Å¸ÀÔ. (C++¿¡¼­ÀÇ ÇÔ¼ö Æ÷ÀÎÅÍÀÇ ¿ªÇÒ°ú À¯»ç)
-    //event¿Í µ¨¸®ÄÉÀÌÆ®¿¡ ´ëÇÑ ÀÚ¼¼ÇÑ ¼³¸í : https://kimyir.tistory.com/14
+    public event System.Action OnDeath; //OnDeathëŠ” OnEnemyDeathë¥¼ í˜¸ì¶œí•´ì¤Œ.
+    //System.Action : ë¸ë¦¬ê²Œì´íŠ¸ ë©”ì„œë“œ
+    //ë¸ë¦¬ê²Œì´íŠ¸ ë©”ì„œë“œ : ë‹¤ë¥¸ ë©”ì„œë“œì˜ ìœ„ì¹˜ë¥¼ ê°€ë¦¬í‚¤ê³  ë¶ˆëŸ¬ë‚¼ ìˆ˜ ìˆëŠ” íƒ€ì…. (C++ì—ì„œì˜ í•¨ìˆ˜ í¬ì¸í„°ì™€ ë¹„ìŠ·í•œ ê°œë…)
+    //eventì™€ ë¸ë¦¬ê²Œì´íŠ¸ì˜ ì¢€ë” ìì„¸í•œ ì„¤ëª… : https://kimyir.tistory.com/14
 
     protected virtual void Start()
     {
@@ -19,6 +19,11 @@ public class LivingEntity : MonoBehaviour, IDamageable
     }
 
     public virtual void TakeHit(float damage, Vector3 hitPoint, Vector3 hitDirection)
+    {
+        TakeDamage(damage);
+    }
+
+    public virtual void TakeHit(float damage, Vector3 hitPoint, Vector3 hitDirection, bool isCriticalHit)
     {
         TakeDamage(damage);
     }

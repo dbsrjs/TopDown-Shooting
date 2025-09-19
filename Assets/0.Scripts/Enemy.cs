@@ -10,11 +10,11 @@ public class Enemy : LivingEntity
 {
     public enum State
     {
-        Idle,       //¾Æ¹«°Íµµ ¾È ÇÏ´Â Áß
-        Chasing,    //ÇÃ·¹ÀÌ¾î Ãß°İ Áß
-        Attacking   //ÇÃ·¹ÀÌ¾î °ø°İ Áß    
+        Idle,       //ì•„ë¬´ê²ƒë„ ì•ˆ í•˜ëŠ” ìƒíƒœ
+        Chasing,    //í”Œë ˆì´ì–´ ì¶”ê²© ìƒíƒœ
+        Attacking   //í”Œë ˆì´ì–´ ê³µê²© ìƒíƒœ
     };
-    State currentState; //ÇöÀç »óÅÂ
+    State currentState; //í˜„ì¬ ìƒíƒœ
 
     public static event Action OnDeathStatic;
 
@@ -22,22 +22,22 @@ public class Enemy : LivingEntity
     Transform target;              //Player
     LivingEntity targetEntity;
 
-    Material skinMaterial;             //°ø°İÇÒ ¶§ ¾µ ¸ŞÅ×¸®¾ó
-    public ParticleSystem deathEffect; //»ç¸Á ÆÄÆ¼Å¬
+    Material skinMaterial;             //ì ì˜ ìŠ¤í‚¨ ìƒ‰ ë¨¸í‹°ë¦¬ì–¼
+    public ParticleSystem deathEffect; //ì£½ìŒ íŒŒí‹°í´
 
     Color originalColor;
 
-    float attackDistance = 0.5f;   //°ø°İÇÒ ¼ö ÀÖ´Â °Å¸®
+    float attackDistance = 0.5f;   //ê³µê²©í•  ìˆ˜ ìˆëŠ” ê±°ë¦¬
 
-    float timeBetweenAttacks = 1;  //°ø°İ »çÀÌ¿¡ Å¸ÀÌ¸Ó
-    float nextAttackTime;          //´ÙÀ½ °ø°İ °¡´É ½Ã°£
+    float timeBetweenAttacks = 1;  //ê³µê²© ì‚¬ì´ì˜ íƒ€ì´ë°
+    float nextAttackTime;          //ë‹¤ìŒ ê³µê²© ê°€ëŠ¥ ì‹œê°„
 
     float damage = 1;
 
-    float myCollisionRadius;       //Àû Äİ¸®¼Ç ¹İÁö¸§
-    float targetCollisionRadius;   //ÇÃ·¹ÀÌ¾î Äİ¸®¼Ç ¹İÁö¸§
+    float myCollisionRadius;       //ë‚´ ì½œë¼ì´ë” ë°˜ì§€ë¦„
+    float targetCollisionRadius;   //í”Œë ˆì´ì–´ ì½œë¼ì´ë” ë°˜ì§€ë¦„
 
-    bool hasTarget;    //true : ÇÃ·¹ÀÌ¾î°¡ ¾øÀ½.
+    bool hasTarget;    //true : í”Œë ˆì´ì–´ ìˆìŒ.
 
     public void Awake()
     {
@@ -67,16 +67,16 @@ public class Enemy : LivingEntity
             StartCoroutine(UpdatePath());
         }
     }
-    
+
     void Update()
     {
-        if (hasTarget) 
+        if (hasTarget)
         {
             if (Time.time > nextAttackTime)
             {
-                float sqrDstToTarget = (target.position - transform.position).sqrMagnitude; //¸ñÇ¥ À§Ä¡¿Í ÀÚ½ÅÀÇ À§Ä¡ÀÇ Â÷¿¡ Á¦°ö.
+                float sqrDstToTarget = (target.position - transform.position).sqrMagnitude; //ëª©í‘œ ìœ„ì¹˜ì™€ ìì‹ ì˜ ìœ„ì¹˜ì˜ ê±°ë¦¬ ì œê³±.
 
-                if (sqrDstToTarget < Mathf.Pow(attackDistance + myCollisionRadius + targetCollisionRadius, 2))  //°ø°İÇÒ ¼ö ÀÖ´ÂÁö¿¡ ´ëÇÑ °Å¸® °è»ê
+                if (sqrDstToTarget < Mathf.Pow(attackDistance + myCollisionRadius + targetCollisionRadius, 2))  //ê³µê²©í•  ìˆ˜ ìˆëŠ”ì§€ì— ëŒ€í•œ ê±°ë¦¬ ê²€ì‚¬
                 {
                     nextAttackTime = Time.time + timeBetweenAttacks;
                     AudioManager.instance.PlaySound("Enemy Attack", transform.position);
@@ -87,12 +87,12 @@ public class Enemy : LivingEntity
     }
 
     /// <summary>
-    /// Àû Æ¯Â¡ Á¤º¸ Á¤ÀÇ
+    /// ì  íŠ¹ì§• ì„¸íŒ… í•¨ìˆ˜
     /// </summary>
-    /// <param name="moveSpeed">ÀÌµ¿ ¼Óµµ</param>
-    /// <param name="hitsToKillPlayer">ÇÃ·¹ÀÌ¾î HP / hitsToKillPlayer</param>
-    /// <param name="enemyHealth">Àû(ÀÚ½Å) HP</param>
-    /// <param name="skinColor">»ö°¥</param>
+    /// <param name="moveSpeed">ì´ë™ ì†ë„</param>
+    /// <param name="hitsToKillPlayer">í”Œë ˆì´ì–´ HP / hitsToKillPlayer</param>
+    /// <param name="enemyHealth">ì (ìì‹ ) HP</param>
+    /// <param name="skinColor">ìƒ‰ìƒ</param>
     public void SetCharacteristics(float moveSpeed, int hitsToKillPlayer, float enemyHealth, Color skinColor)
     {
         pathfinder.speed = moveSpeed;
@@ -111,9 +111,17 @@ public class Enemy : LivingEntity
     }
 
     /// <summary>
-    /// ÇÇ°İ ´çÇÔ
+    /// í”¼ê²© ì²˜ë¦¬
     /// </summary>
     public override void TakeHit(float damage, Vector3 hitPoint, Vector3 hitDirection)
+    {
+        TakeHit(damage, hitPoint, hitDirection, false);
+    }
+
+    /// <summary>
+    /// ì¹˜ëª…íƒ€ ì—¬ë¶€ë¥¼ í¬í•¨í•œ í”¼ê²© ì²˜ë¦¬
+    /// </summary>
+    public override void TakeHit(float damage, Vector3 hitPoint, Vector3 hitDirection, bool isCriticalHit)
     {
         AudioManager.instance.PlaySound("Impact", transform.position);
         if (damage >= health && !dead)
@@ -122,13 +130,42 @@ public class Enemy : LivingEntity
                 OnDeathStatic();
 
             AudioManager.instance.PlaySound("Enemy Death", transform.position);
-            Destroy(Instantiate(deathEffect.gameObject, hitPoint, Quaternion.FromToRotation(Vector3.forward, hitDirection)) as GameObject, deathEffect.startLifetime);
+
+            // íŒŒí‹°í´ íš¨ê³¼ ìƒì„±
+            GameObject deathEffectInstance = Instantiate(deathEffect.gameObject, hitPoint, Quaternion.FromToRotation(Vector3.forward, hitDirection)) as GameObject;
+
+            // ì¹˜ëª…íƒ€ë©´ íŒŒí‹°í´ 3ë°°ë¡œ ì¦ê°€
+            if (isCriticalHit)
+            {
+                ParticleSystem deathParticle = deathEffectInstance.GetComponent<ParticleSystem>();
+                if (deathParticle != null)
+                {
+                    var main = deathParticle.main;
+                    main.maxParticles = main.maxParticles * 3;
+
+                    var emission = deathParticle.emission;
+                    emission.rateOverTime = emission.rateOverTime.constant * 3;
+
+                    // Burstê°€ ìˆë‹¤ë©´ ê·¸ê²ƒë„ 3ë°°ë¡œ
+                    if (emission.burstCount > 0)
+                    {
+                        for (int i = 0; i < emission.burstCount; i++)
+                        {
+                            var burst = emission.GetBurst(i);
+                            burst.count = burst.count.constant * 3;
+                            emission.SetBurst(i, burst);
+                        }
+                    }
+                }
+            }
+
+            Destroy(deathEffectInstance, deathEffect.startLifetime);
         }
         base.TakeHit(damage, hitPoint, hitDirection);
     }
 
     /// <summary>
-    /// Å¸°Ù »ç¸Á
+    /// íƒ€ê²Ÿ ì£½ìŒ
     /// </summary>
     void OnTargetDeath()
     {
@@ -138,7 +175,7 @@ public class Enemy : LivingEntity
 
 
     /// <summary>
-    /// °ø°İ
+    /// ê³µê²©
     /// </summary>
     IEnumerator Attack()
     {
@@ -150,10 +187,10 @@ public class Enemy : LivingEntity
         Vector3 attackPos = target.position - dirToTarget * (myCollisionRadius);
 
         float attackSpeed = 3;
-        float percent = 0;  //0~1  //¾Ö´Ï¸ŞÀÌ¼Ç °Å¸®
+        float percent = 0;  //0~1  //ì• ë‹ˆë©”ì´ì…˜ ê±°ë¦¬
 
         skinMaterial.color = Color.red;
-        bool hasAppliedDamage = false; //´ë¹ÌÁö¸¦ Àû¿ëÇÏ´Â µµÁßÀÎ°¡..?
+        bool hasAppliedDamage = false; //ë°ë¯¸ì§€ë¥¼ ì ìš©í–ˆëŠ” ìƒí™©ì¸ê°€..?
 
         while(percent <= 1)
         {
@@ -164,10 +201,10 @@ public class Enemy : LivingEntity
             }
 
             percent += Time.deltaTime * attackSpeed;
-            //interpolation(º¸°£) : ¾Ë·ÁÁø Á¡µéÀÇ À§Ä¡¸¦ ÂüÁ¶ÇÏ¿©, ÁıÇÕÀÇ ÀÏÁ¤ ¹üÀ§ÀÇ Á¡µé(¼±)À» »õ·Ó°Ô ±×¸®´Â ¹æ¹ıÀ» ¸»ÇÕ´Ï´Ù.
-            //¿øÁöÁ¡ -> °ø°İÁöÁ¡À¸·Î ÀÌµ¿ÇÒ ¶§ ÂüÁ¶ÇÒ ´ëÄª °î¼±À» ¸¸µå´Â ÂüÁ¶Á¡À» ÀÇ¹ÌÇÔ.
+            //interpolation(ë³´ê°„) : ì•Œë ¤ì§„ ì§€ì ì˜ ìœ„ì¹˜ë¥¼ ì°¸ì¡°í•˜ì—¬, ì§€ì ì˜ ì‚¬ì´ ì§€ì ì˜ ê°’(ë†’ì´) ë“±ì„ ì¶”ì •í•´ êµ¬í•˜ëŠ” ê³¼ì •ì…ë‹ˆë‹¤.
+            //ì¤‘ê°„ê°’ -> ì•„ë˜ìœ„ë¡œì¨ ì´ë™ì„ í•œ ë‹¤ìŒì— ë‹¤ì‹œ ëŒì•„ê°€ ê°€ê²©ì„ ê°€í•œë‹¤ëŠ” ì˜ë¯¸ì„.
             float interpolation = ( -Mathf.Pow(percent, 2) + percent) * 4;
-            transform.position = Vector3.Lerp(originalPos, attackPos, interpolation);   //Lerp : µÎ º¤ÅÍ »çÀÌ¿¡ ºñ·Ê °ªÀ¸·Î ³»ºĞÁ¡ ÁöÁ¡À» ¹İÈ¯.
+            transform.position = Vector3.Lerp(originalPos, attackPos, interpolation);   //Lerp : ë‘ ë²¡í„° ì‚¬ì´ì˜ ì£¼ì–´ì§„ ë¹„ìœ¨ë¡œ ê³„ì‚°ëœ ë²¡í„°ë¥¼ ë°˜í™˜.
 
             yield return null;
         }
@@ -178,11 +215,11 @@ public class Enemy : LivingEntity
     }
 
     /// <summary>
-    /// ÀÌµ¿ °æ·Î ¾÷µ¥ÀÌÆ®
+    /// ì´ë™ ê²½ë¡œ ì—…ë°ì´íŠ¸
     /// </summary>
     IEnumerator UpdatePath()
     {
-        float refreshRate = 0.2f;   //¸îÃÊ¿¡ ÇÑ¹ø¾¿?
+        float refreshRate = 0.2f;   //ì´ˆë‹¹ì— ëª‡ë²ˆì”©?
 
         while(hasTarget)
         {
@@ -192,7 +229,7 @@ public class Enemy : LivingEntity
                 Vector3 targetPos = target.position - dirToTarget * (myCollisionRadius + targetCollisionRadius + attackDistance /  2);
                 if (!dead)
                     pathfinder.SetDestination(targetPos);
-            }            
+            }
 
             yield return new WaitForSeconds(refreshRate);
         }

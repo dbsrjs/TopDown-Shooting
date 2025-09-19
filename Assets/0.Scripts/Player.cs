@@ -32,7 +32,21 @@ public class Player : LivingEntity
     void OnNewWave(int waveNumber)
     {
         health = startHealth;
-        gunController.EquipGun(waveNumber - 1);
+
+        // 랜덤 모드인지 확인
+        bool isRandomMode = GameSettings.Instance != null && GameSettings.Instance.IsRandomMapMode();
+
+        if (isRandomMode)
+        {
+            // 랜덤 모드에서는 무기 5개 중에서 랜덤 선택
+            int randomWeaponIndex = Random.Range(0, gunController.allGuns.Length);
+            gunController.EquipGun(randomWeaponIndex);
+        }
+        else
+        {
+            // 일반 모드에서는 웨이브에 따른 무기 선택
+            gunController.EquipGun(waveNumber - 1);
+        }
     }
 
     void Update()
