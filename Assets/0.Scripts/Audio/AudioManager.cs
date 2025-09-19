@@ -68,7 +68,6 @@ public class AudioManager : MonoBehaviour
         {
             case AudioChannel.Master:
                 masterVolumePercent = volumePercent;
-                // 마스터 볼륨이 변경되면 모든 음악 소스에 즉시 적용
                 UpdateMusicVolume();
                 break;
             case AudioChannel.Sfx:
@@ -76,7 +75,6 @@ public class AudioManager : MonoBehaviour
                 break;
             case AudioChannel.Music:
                 musicVolumePercent = volumePercent;
-                // 음악 볼륨이 변경되면 음악 소스에 즉시 적용
                 UpdateMusicVolume();
                 break;
         }

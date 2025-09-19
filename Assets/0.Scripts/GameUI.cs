@@ -39,6 +39,10 @@ public class GameUI : MonoBehaviour
 
     private void Update()
     {
+        // 게임이 일시정지 상태라면 UI 업데이트 중단
+        if (Time.timeScale == 0f)
+            return;
+
         if (ScoreKeeper.score < 999999)
             scoreText.text = ScoreKeeper.score.ToString("D6");
         else

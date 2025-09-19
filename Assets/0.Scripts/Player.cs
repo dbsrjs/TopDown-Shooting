@@ -51,16 +51,20 @@ public class Player : LivingEntity
 
     void Update()
     {
+        // 게임이 일시정지 상태라면 플레이어 입력 무시
+        if (Time.timeScale == 0f)
+            return;
+
         //이동 로직
         Vector3 moveInout = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
         Vector3 moveVelocity = moveInout.normalized * speed;
-        controller.Move(moveVelocity); 
+        controller.Move(moveVelocity);
 
         //바라보는 곳
         Ray ray = camera.ScreenPointToRay(Input.mousePosition); //마우스 포인터의 위치를 반환해줌
         Plane groundPlane = new Plane(Vector3.up,Vector3.up * gunController.GunHeight);
         float rayDistance;
-        
+
         if(groundPlane.Raycast(ray, out rayDistance))   //out : 변수를 참조로 전달함.
         {
             //ray가 ground와 부딪힌거임.
