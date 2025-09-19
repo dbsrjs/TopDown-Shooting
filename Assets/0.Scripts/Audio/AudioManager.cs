@@ -7,9 +7,9 @@ public class AudioManager : MonoBehaviour
     public static AudioManager instance;
 
     public enum AudioChannel { Master, Sfx, Music };
-    public float masterVolumePercent { get; private set; }     //������ ����
-    public float sfxVolumePercent { get; private set; }        //ȿ�� ����
-    public float musicVolumePercent { get; private set; }      //���� ����
+    public float masterVolumePercent { get; private set; }     //마스터 볼륨
+    public float sfxVolumePercent { get; private set; }        //효과음 볼륨
+    public float musicVolumePercent { get; private set; }      //음악 볼륨
 
     AudioSource sfx2DSource;
     AudioSource[] musicSources;
@@ -68,15 +68,16 @@ public class AudioManager : MonoBehaviour
         {
             case AudioChannel.Master:
                 masterVolumePercent = volumePercent;
+                // 마스터 볼륨이 변경되면 모든 음악 소스에 즉시 적용
+                UpdateMusicVolume();
                 break;
             case AudioChannel.Sfx:
                 sfxVolumePercent = volumePercent;
                 break;
             case AudioChannel.Music:
                 musicVolumePercent = volumePercent;
-
-                musicSources[0].volume = musicVolumePercent * masterVolumePercent;
-                musicSources[1].volume = musicVolumePercent * masterVolumePercent;
+                // 음악 볼륨이 변경되면 음악 소스에 즉시 적용
+                UpdateMusicVolume();
                 break;
         }
 
@@ -84,6 +85,18 @@ public class AudioManager : MonoBehaviour
         PlayerPrefs.SetFloat("sfx vol", sfxVolumePercent);
         PlayerPrefs.SetFloat("music vol", musicVolumePercent);
         PlayerPrefs.Save();
+    }
+
+    /// <summary>
+    /// 음악 소스들의 볼륨 업데이트
+    /// </summary>
+    void UpdateMusicVolume()
+    {
+        if (musicSources != null)
+        {
+            musicSources[0].volume = musicVolumePercent * masterVolumePercent;
+            musicSources[1].volume = musicVolumePercent * masterVolumePercent;
+        }
     }
 
     public void PlayMusic(AudioClip clip, float fadeDuration = 1)
