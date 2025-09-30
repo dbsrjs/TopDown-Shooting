@@ -6,7 +6,7 @@ public class GunController : MonoBehaviour
 {
     public Transform  weaponHold;
     public Gun[] allGuns;
-    Gun equippedGun; //���� �������� ��
+    Gun equippedGun; //현재 장착된 총
 
     public void EquipGun(Gun gunToEquip)
     {
@@ -31,7 +31,7 @@ public class GunController : MonoBehaviour
     }
 
     /// <summary>
-    /// ��Ƽ踦 ���
+    /// 트리거를 누름
     /// </summary>
     public void OnTriggerHold()
     {
@@ -42,7 +42,7 @@ public class GunController : MonoBehaviour
     }
 
     /// <summary>
-    /// ��Ƽ踦 ����
+    /// 트리거를 놓음
     /// </summary>
     public void OnTriggerRelease()
     {
@@ -50,7 +50,7 @@ public class GunController : MonoBehaviour
     }
 
     /// <summary>
-    /// ������ �ٶ�
+    /// 조준점을 바라봄
     /// </summary>
     public void Aim(Vector3 aimPoint)
     {
@@ -61,7 +61,7 @@ public class GunController : MonoBehaviour
     }
 
     /// <summary>
-    /// ������
+    /// 재장전
     /// </summary>
     public void Reload()
     {

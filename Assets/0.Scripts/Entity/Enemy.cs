@@ -64,7 +64,7 @@ public class Enemy : LivingEntity
             currentState = State.Chasing;
 
             targetEntity.OnDeath += OnTargetDeath;
-            StartCoroutine(UpdatePath());
+            StartCoroutine(UpdatePath());   //플레이어 추적 시작
         }
     }
 
@@ -87,11 +87,11 @@ public class Enemy : LivingEntity
     }
 
     /// <summary>
-    /// 적 특징 세팅 함수
+    /// 적 세팅 함수
     /// </summary>
     /// <param name="moveSpeed">이동 속도</param>
-    /// <param name="hitsToKillPlayer">플레이어 HP / hitsToKillPlayer</param>
-    /// <param name="enemyHealth">적(자신) HP</param>
+    /// <param name="hitsToKillPlayer">플레이어 HP</param>
+    /// <param name="enemyHealth">적 HP</param>
     /// <param name="skinColor">색상</param>
     public void SetCharacteristics(float moveSpeed, int hitsToKillPlayer, float enemyHealth, Color skinColor)
     {
@@ -146,7 +146,6 @@ public class Enemy : LivingEntity
                     var emission = deathParticle.emission;
                     emission.rateOverTime = emission.rateOverTime.constant * 3;
 
-                    // Burst가 있다면 그것도 3배로
                     if (emission.burstCount > 0)
                     {
                         for (int i = 0; i < emission.burstCount; i++)

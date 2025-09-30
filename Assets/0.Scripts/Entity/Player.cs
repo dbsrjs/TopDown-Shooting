@@ -26,7 +26,7 @@ public class Player : LivingEntity
 
     protected override void Start()
     {
-        base.Start();
+        base.Start();   //LivingEntity의 Start() 호출
     }
 
     void OnNewWave(int waveNumber)

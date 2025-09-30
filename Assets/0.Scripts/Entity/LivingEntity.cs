@@ -46,3 +46,4 @@ public class LivingEntity : MonoBehaviour, IDamageable
         Destroy(gameObject);
     }
 }
+

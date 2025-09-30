@@ -103,16 +103,17 @@ public class Gun : MonoBehaviour
     /// </summary>
     void Shoot()
     {
-        if(!isReloading && Time.time > nextshottime && bulletRemainingInMag > 0)
+        //장전중 아님, 다음 발사 시간 지남, 탄창에 총알 남아있음
+        if (!isReloading && Time.time > nextshottime && bulletRemainingInMag > 0)
         {
-            if(fireMode == FireMode.Burst)
+            if(fireMode == FireMode.Burst)  //점사
             {
                 if (shotsRemainingInBurst == 0)
                     return;
 
                 shotsRemainingInBurst--;
             }
-            else if (fireMode == FireMode.Single)
+            else if (fireMode == FireMode.Single)   //단밣
             {
                 if (!triggerReleasedSinceLastShot)
                     return;

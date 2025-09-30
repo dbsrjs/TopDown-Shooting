@@ -40,3 +40,5 @@ public class GameSettings : MonoBehaviour
         return useRandomMaps;
     }
 }
+
+
